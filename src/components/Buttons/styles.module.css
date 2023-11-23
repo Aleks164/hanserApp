@@ -1,0 +1,14 @@
+.toggle_button_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.toggle_button {
+  border-radius: 14px;
+  margin-right: 5px;
+}
+
+.toggle_button span span {
+  font-size: 23px !important;
+}

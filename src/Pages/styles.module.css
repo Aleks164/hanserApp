@@ -1,0 +1,29 @@
+body {
+  background: linear-gradient(
+    90deg,
+    rgba(235, 234, 196, 1) 0%,
+    rgba(236, 212, 150, 1) 45%,
+    rgba(208, 188, 199, 1) 100%
+  );
+  background-size: 1500px;
+  background-repeat: repeat-x;
+}
+
+.logo_container {
+  display: flex;
+  justify-content: flex-end;
+  background-color: white;
+  padding: 1px;
+  margin: 0px;
+  height: 46px;
+  cursor: pointer;
+}
+
+.logo {
+  height: 45px;
+  transition: scale 0.3s;
+}
+
+.logo:hover {
+  transform: scale(1.1);
+}

@@ -1,0 +1,26 @@
+.goods_pictures {
+  width: 25px;
+  height: 25px;
+}
+
+.goods_info_container {
+  display: flex;
+  align-items: center;
+}
+
+.goods_pictures_container {
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  border: 1px double;
+  border-radius: 2px;
+  z-index: 5;
+  height: fit-content;
+}
+
+.goods_pictures_container:hover {
+  transform: scaleX(10) scaleY(15) translate(0px, -10px);
+}

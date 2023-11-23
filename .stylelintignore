@@ -1,0 +1,8 @@
+dist
+coverage/
+.storybook/
+.loki/
+.husky/
+.github/
+build/
+storybook-static/
