@@ -10,6 +10,7 @@
     "lint:fix": "prettier --write . && eslint . --fix --ext .js,.tsx && stylelint \"**/*.css\" --fix",
     "tsc": "npx tsc --noEmit",
     "start": "concurrently \"ts-node --esm server/app.ts\" \"npm run dev\"",
+    "server": "ts-node --esm server/app.ts",
     "prepare": "husky install"
   },
   "keywords": [],
