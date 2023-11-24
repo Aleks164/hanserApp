@@ -42,27 +42,30 @@ function TabTables() {
   );
 
   useEffect(() => {
-    const nmId_items = document.getElementsByClassName(
-      "nmId_item"
-    ) as HTMLCollectionOf<HTMLDivElement>;
-    const rating_items = Array.from(nmId_items).map((item) => item.innerText);
-    if (!rating_items.length) return;
-    const newRatingMap: Record<string, string> = {};
-    rating_items.forEach((el) => {
-      if (el) newRatingMap[el] = el;
-    });
+    const timeoutId = setTimeout(() => {
+      const nmId_items = document.getElementsByClassName(
+        "nmId_item"
+      ) as HTMLCollectionOf<HTMLDivElement>;
+      const rating_items = Array.from(nmId_items).map((item) => item.innerText);
+      if (!rating_items.length) return;
+      const newRatingMap: Record<string, string> = {};
+      rating_items.forEach((el) => {
+        if (el) newRatingMap[el] = el;
+      });
 
-    async function getRating() {
-      const nmidAsString = Object.keys(newRatingMap).join(",");
-      const ratingItems = await getRatingByNmId(
-        RATING_PATH_NAMES.RATING,
-        nmidAsString
-      );
-      const parsedItems = await ratingItems.json();
-      setRatingMap(parsedItems);
-      console.log(parsedItems);
-    }
-    getRating();
+      async function getRating() {
+        const nmidAsString = Object.keys(newRatingMap).join(",");
+        const ratingItems = await getRatingByNmId(
+          RATING_PATH_NAMES.RATING,
+          nmidAsString
+        );
+        const parsedItems = await ratingItems.json();
+        setRatingMap(parsedItems);
+        console.log(parsedItems);
+      }
+      getRating();
+    }, 2500);
+    return () => clearTimeout(timeoutId);
   }, [itemsList]);
 
   return (
