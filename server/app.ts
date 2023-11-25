@@ -19,7 +19,7 @@ import salesByDateRange from "./controller/byDateRange/byBarcode/sales";
 import ratingByNmid from "./controller/byDateRange/byBarcode/rating";
 
 const app = express();
-const port = 8880;
+const port = 80;
 // const key = fs.readFileSync('/etc/letsencrypt/live/hansterstatserver.ru/privkey.pem');
 // const cert = fs.readFileSync('/etc/letsencrypt/live/hansterstatserver.ru/fullchain.pem');
 // const options = {
