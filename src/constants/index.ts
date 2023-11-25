@@ -1,7 +1,8 @@
 import { PATH_NAMES } from "@/requestDataHelpers/getCategoriesByDateRange";
 
 // export const HOST_NAME = 'https://hansterstatserver.ru';
-export const HOST_NAME = 'http://81.31.247.81:8880';
+export const HOST_NAME = 'http://hansterstatserver.ru';
+// export const HOST_NAME = 'http://81.31.247.81:8880';
 export const calendarTypes = ["month", "week", "date", "range"] as const;
 export const diagramPageCalendarTypes = ["month", "week", "date"] as const;
 export const datePickerDictionary = {
