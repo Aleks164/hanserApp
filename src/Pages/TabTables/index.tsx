@@ -24,6 +24,7 @@ export interface Rating {
 function TabTables() {
   const [itemsList, setItemsList] = useState<TableStatRowInfoType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
   const [ratingMap, setRatingMap] = useState<
     Record<string, { feedbacksCount: number; valuation: string }>
   >({});
@@ -47,6 +48,7 @@ function TabTables() {
         "nmId_item"
       ) as HTMLCollectionOf<HTMLDivElement>;
       const rating_items = Array.from(nmId_items).map((item) => item.innerText);
+      console.log(rating_items);
       if (!rating_items.length) return;
       const newRatingMap: Record<string, string> = {};
       rating_items.forEach((el) => {
@@ -64,9 +66,9 @@ function TabTables() {
         console.log(parsedItems);
       }
       getRating();
-    }, 2500);
+    }, 1000);
     return () => clearTimeout(timeoutId);
-  }, [itemsList]);
+  }, [itemsList, currentPage]);
 
   return (
     <div style={{ marginTop: 10 }}>
@@ -81,6 +83,7 @@ function TabTables() {
       <Row style={{ marginTop: 10 }} gutter={4}>
         <DataTable
           itemsList={itemsList}
+          setCurrentPage={setCurrentPage}
           columns={getColumns({ chosenProducts, rating: ratingMap })}
           loading={isLoading}
         />

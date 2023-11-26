@@ -26,13 +26,6 @@ export const getColumns = ({
     key: "barcode",
     fixed: "left",
     width: 90,
-    // render: (value: string) => (
-    //   <AddRemoveItemToDiagramButton
-    //     key={value + "_toggle_button"}
-    //     value={value}
-    //     chosenProducts={chosenProducts}
-    //   />
-    // ),
     sorter: (a, b) => {
       return ("" + a.barcode).localeCompare(b.barcode);
     },
@@ -42,7 +35,7 @@ export const getColumns = ({
     dataIndex: "nmId",
     key: "nmId",
     fixed: "left",
-    width: 70,
+    width: 140,
     render: (value: number, record) => (
       <ProductImage
         value={value}
@@ -147,7 +140,7 @@ export const getColumns = ({
     key: "saleQuantity",
     width: 85,
     fixed: "right",
-    render: (value) => console.log(value) || value || 0,
+    render: (value) => value || 0,
     sorter: (a, b) => a.saleQuantity - b.saleQuantity,
   },
 ];

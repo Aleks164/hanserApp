@@ -7,9 +7,15 @@ interface DataTableParamsType {
   itemsList: Record<string, any>[];
   columns: ColumnType<Required<any>>[];
   loading: boolean;
+  setCurrentPage?: (page: number) => void;
 }
 
-function DataTable({ itemsList, columns, loading }: DataTableParamsType) {
+function DataTable({
+  itemsList,
+  columns,
+  loading,
+  setCurrentPage,
+}: DataTableParamsType) {
   return (
     <>
       <Row>
@@ -20,6 +26,11 @@ function DataTable({ itemsList, columns, loading }: DataTableParamsType) {
           rowKey={(record) => record._id}
           columns={columns}
           loading={loading}
+          pagination={{
+            onChange: (page: number, pageSize: number) => {
+              if (setCurrentPage) setCurrentPage(page);
+            },
+          }}
           rowClassName={styles.table_row}
           locale={{ emptyText: <Empty /> }}
         />
