@@ -1,36 +1,56 @@
 import React, { useRef } from "react";
 import { Empty, Row, Table } from "antd";
-import { ColumnType } from "antd/es/table";
+import { ColumnType, TablePaginationConfig } from "antd/es/table";
 import styles from "./styles.module.css";
+import {
+  FilterValue,
+  SorterResult,
+  TableCurrentDataSource,
+} from "antd/es/table/interface";
+import { PageParams } from "@/Pages/TabTables";
 
 interface DataTableParamsType {
   itemsList: Record<string, any>[];
   columns: ColumnType<Required<any>>[];
   loading: boolean;
-  setCurrentPage?: (page: number) => void;
+  setCurrentPageParams?: React.Dispatch<React.SetStateAction<PageParams>>;
 }
 
 function DataTable({
   itemsList,
   columns,
   loading,
-  setCurrentPage,
+  setCurrentPageParams,
 }: DataTableParamsType) {
   return (
     <>
-      <Row>
+      <Row style={{ marginTop: 10 }}>
         <Table
           showSorterTooltip={false}
           scroll={{ x: true }}
           dataSource={itemsList}
           rowKey={(record) => record._id}
           columns={columns}
-          loading={loading}
-          pagination={{
-            onChange: (page: number, pageSize: number) => {
-              if (setCurrentPage) setCurrentPage(page);
-            },
+          onChange={(
+            pagination: TablePaginationConfig,
+            filters: Record<string, FilterValue | null>,
+            sorter: SorterResult<Record<string, any>>,
+            extra: TableCurrentDataSource<Record<string, any>>
+          ) => {
+            const { current = 1, pageSize = 10 } = pagination;
+            const { field = "", order = "" } = sorter;
+            const { currentDataSource = [] } = extra;
+            console.log(current, pageSize, field, order, currentDataSource);
+            if (setCurrentPageParams)
+              setCurrentPageParams({
+                current,
+                pageSize,
+                field,
+                order,
+                currentDataSource,
+              });
           }}
+          loading={loading}
           rowClassName={styles.table_row}
           locale={{ emptyText: <Empty /> }}
         />

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Row } from "antd";
+import { Button, Row, Tooltip } from "antd";
 import DataTable from "@/components/DataTable/Index";
 import DatePiker from "@/components/DatePicker/DatePiker";
 import ExcelImporter from "@/components/ExcelImporter";
@@ -14,6 +14,8 @@ import { useStore } from "effector-react";
 import getRatingByNmId, {
   RATING_PATH_NAMES,
 } from "@/requestDataHelpers/getRatingByNmId";
+import { DiffOutlined } from "@ant-design/icons";
+import styles from "./styles.module.css";
 
 export interface Rating {
   valuation: string;
@@ -21,10 +23,21 @@ export interface Rating {
   nmId: number;
 }
 
+export interface PageParams {
+  current: number;
+  pageSize: number;
+  field: React.Key;
+  order: string;
+  currentDataSource: Record<string, any>[];
+}
+
 function TabTables() {
   const [itemsList, setItemsList] = useState<TableStatRowInfoType[]>([]);
+  const [isStockFilterOn, setIsStockFilterOn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPageParams, setCurrentPageParams] = useState<PageParams>(
+    {} as PageParams
+  );
   const [ratingMap, setRatingMap] = useState<
     Record<string, { feedbacksCount: number; valuation: string }>
   >({});
@@ -43,47 +56,57 @@ function TabTables() {
   );
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const nmId_items = document.getElementsByClassName(
-        "nmId_item"
-      ) as HTMLCollectionOf<HTMLDivElement>;
-      const rating_items = Array.from(nmId_items).map((item) => item.innerText);
-      console.log(rating_items);
-      if (!rating_items.length) return;
-      const newRatingMap: Record<string, string> = {};
-      rating_items.forEach((el) => {
-        if (el) newRatingMap[el] = el;
-      });
+    let { pageSize, currentDataSource, current } = currentPageParams;
+    console.log(currentDataSource);
+    if (!currentDataSource && !itemsList.length) return;
+    if (!currentDataSource && itemsList.length) {
+      current = 1;
+      pageSize = 10;
+      currentDataSource = itemsList;
+    }
 
-      async function getRating() {
-        const nmidAsString = Object.keys(newRatingMap).join(",");
-        const ratingItems = await getRatingByNmId(
-          RATING_PATH_NAMES.RATING,
-          nmidAsString
-        );
-        const parsedItems = await ratingItems.json();
-        setRatingMap(parsedItems);
-        console.log(parsedItems);
-      }
-      getRating();
-    }, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [itemsList, currentPage]);
+    currentDataSource = currentDataSource.slice(
+      (current - 1) * pageSize,
+      pageSize * current
+    );
+
+    const newRatingMap: Record<string, string> = {};
+    currentDataSource.forEach((el) => {
+      if (el.nmId) newRatingMap[el.nmId] = el.nmId;
+    });
+    async function getRating() {
+      const nmidAsString = Object.keys(newRatingMap).join(",");
+      const ratingItems = await getRatingByNmId(
+        RATING_PATH_NAMES.RATING,
+        nmidAsString
+      );
+      const parsedItems = await ratingItems.json();
+      setRatingMap(parsedItems);
+      console.log(parsedItems);
+    }
+    getRating();
+  }, [itemsList, currentPageParams]);
 
   return (
     <div style={{ marginTop: 10 }}>
       <Row>
         <DatePiker onSetData={onSetDataHandler} />
         <CurrentDate firstDate={firstDate} secondDate={secondDate} />
-        <ExcelImporter
-          data={itemsList}
-          fileName={dayjs(new Date()).format(dateFormat)}
-        />
-      </Row>
-      <Row style={{ marginTop: 10 }} gutter={4}>
+        <Row className={styles.button_container}>
+          <ExcelImporter
+            data={itemsList}
+            fileName={dayjs(new Date()).format(dateFormat)}
+          />
+          <Tooltip
+            title={"Убрать склад без заказов и продаж за текущий период"}
+            placement="right"
+          >
+            <Button disabled type="primary" icon={<DiffOutlined />} />
+          </Tooltip>
+        </Row>
         <DataTable
           itemsList={itemsList}
-          setCurrentPage={setCurrentPage}
+          setCurrentPageParams={setCurrentPageParams}
           columns={getColumns({ chosenProducts, rating: ratingMap })}
           loading={isLoading}
         />
