@@ -43,16 +43,10 @@ app.get("*", (req, res) => {
   res.status(404).send("Sorry, cant find that");
 });
 
-// setTimeout(async () => {
-//   console.log('startAt:', new Date());
-//   await regularUpdateMongoDB();
-//   console.log('endAt:', new Date());
-// }, 10000)
-
 const job = new CronJob('0 55 6 * * *', async function () {
-  console.log('Midnight1:', new Date());
+  console.log('start', new Date());
   await regularUpdateMongoDB();
-  console.log('Midnight2:', new Date());
+  console.log('end', new Date());
 });
 
 
