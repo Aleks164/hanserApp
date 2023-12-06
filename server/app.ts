@@ -17,6 +17,7 @@ import productListByDateRange from "./controller/byDateRange/byBarcode/productLi
 import SupplierStocks from "./model/supplierStocks";
 import salesByDateRange from "./controller/byDateRange/byBarcode/sales";
 import ratingByNmid from "./controller/byDateRange/byBarcode/rating";
+import feedbacksByNmid from "./controller/byDateRange/byBarcode/feedback";
 
 const app = express();
 const port = 80;
@@ -33,6 +34,7 @@ app.use("/stocks", stocksByDateRange);
 app.use("/sales", salesByDateRange);
 app.use("/reports", reportDetailsByDateRange);
 app.use("/rating", ratingByNmid);
+app.use("/feedback", feedbacksByNmid);
 app.use("/products_list", productListByDateRange);
 
 app.get("/", (req, res) => {

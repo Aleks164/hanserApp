@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Row, Tooltip } from "antd";
+import { Avatar, Button, Card, Modal, Row, Tooltip } from "antd";
 import DataTable from "@/components/DataTable/Index";
 import DatePiker from "@/components/DatePicker/DatePiker";
 import ExcelImporter from "@/components/ExcelImporter";
@@ -16,6 +16,13 @@ import getRatingByNmId, {
 } from "@/requestDataHelpers/getRatingByNmId";
 import { DiffOutlined } from "@ant-design/icons";
 import styles from "./styles.module.css";
+import getFeedbacksByNmId, {
+  FEEDBACK_PATH_NAMES,
+  Feedback,
+  FeedbackData,
+} from "@/requestDataHelpers/getFeedbacksByNmId";
+import getImgSrc from "@/constants/getImageSrc";
+import Meta from "antd/es/card/Meta";
 
 export interface Rating {
   valuation: string;
@@ -31,9 +38,17 @@ export interface PageParams {
   currentDataSource: Record<string, any>[];
 }
 
+export interface FeedbacksParams {
+  visible?: boolean;
+  nmid?: number;
+  isAnswered?: boolean;
+  data?: Feedback[];
+}
+
 function TabTables() {
   const [itemsList, setItemsList] = useState<TableStatRowInfoType[]>([]);
   const [isStockFilterOn, setIsStockFilterOn] = useState(false);
+  const [feedbacksParams, setFeedbacksParams] = useState<FeedbacksParams>({});
   const [isLoading, setIsLoading] = useState(false);
   const [currentPageParams, setCurrentPageParams] = useState<PageParams>(
     {} as PageParams
@@ -56,8 +71,34 @@ function TabTables() {
   );
 
   useEffect(() => {
+    if (!feedbacksParams.visible || !feedbacksParams.nmid) return;
+    async function getFeedbacks() {
+      const feedback = await getFeedbacksByNmId(
+        FEEDBACK_PATH_NAMES.FEEDBACK,
+        feedbacksParams.nmid!,
+        true
+        // !!feedbacksParams.isAnswered
+      );
+      const parsedFeedbacks = (await feedback.json()) as FeedbackData;
+      if (feedbacksParams.visible)
+        setFeedbacksParams((prevState) => ({
+          ...prevState,
+          data: parsedFeedbacks?.data?.feedbacks || [],
+        }));
+    }
+    try {
+      getFeedbacks();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [
+    feedbacksParams.isAnswered,
+    feedbacksParams.visible,
+    feedbacksParams.nmid,
+  ]);
+
+  useEffect(() => {
     let { pageSize, currentDataSource, current } = currentPageParams;
-    console.log(currentDataSource);
     if (!currentDataSource && !itemsList.length) return;
     if (!currentDataSource && itemsList.length) {
       current = 1;
@@ -82,7 +123,6 @@ function TabTables() {
       );
       const parsedItems = await ratingItems.json();
       setRatingMap(parsedItems);
-      console.log(parsedItems);
     }
     getRating();
   }, [itemsList, currentPageParams]);
@@ -107,9 +147,78 @@ function TabTables() {
         <DataTable
           itemsList={itemsList}
           setCurrentPageParams={setCurrentPageParams}
-          columns={getColumns({ chosenProducts, rating: ratingMap })}
+          columns={getColumns({
+            chosenProducts,
+            rating: ratingMap,
+            setFeedbacksParams,
+          })}
           loading={isLoading}
         />
+        <Modal
+          open={feedbacksParams.visible}
+          title="Отзывы"
+          cancelText="Закрыть"
+          okButtonProps={{ style: { display: "none" } }}
+          onCancel={() =>
+            setFeedbacksParams((prevState) => ({
+              ...prevState,
+              visible: false,
+            }))
+          }
+        >
+          {feedbacksParams.data &&
+            feedbacksParams.data
+              .filter((feedback) => feedback.text)
+              .map((feedback) => {
+                return (
+                  <div key={feedback.id}>
+                    <Card style={{ marginTop: 16 }}>
+                      <Meta
+                        avatar={
+                          <Avatar
+                            src={getImgSrc(feedback.productDetails.nmId)}
+                          />
+                        }
+                        title={
+                          <div className={styles.feedback_header}>
+                            {feedback.userName}
+                            {"   "}
+                            {dayjs(feedback.createdDate).format(
+                              "YYYY-MM-DD HH:mm"
+                            )}
+                          </div>
+                        }
+                        description={
+                          <>
+                            <div className={styles.feedback_header_title}>
+                              <span>
+                                {feedback.productDetails.productName}{" "}
+                                {feedback.productDetails.size}
+                              </span>
+                              <br />
+                              <span>
+                                {feedback.productDetails.supplierArticle}
+                              </span>
+                              <br />
+                              <span>
+                                {"Поставщик: "}
+                                {feedback.productDetails.supplierName}{" "}
+                              </span>
+                            </div>
+                            <div className={styles.feedback_body_text}>
+                              {feedback.text}
+                            </div>
+                            <div className={styles.feedback_body_answer}>
+                              {feedback.answer?.text}
+                            </div>
+                          </>
+                        }
+                      />
+                    </Card>
+                  </div>
+                );
+              })}
+        </Modal>
       </Row>
     </div>
   );

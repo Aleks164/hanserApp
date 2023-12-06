@@ -3,6 +3,7 @@ import { ColumnType } from "antd/es/table";
 import { ChosenProductsType } from "@/store/StatStoreContext";
 import ProductImage from "@/components/ProductImage";
 import { TableStatRowInfoType } from "@/Pages/TabTables/onSetData";
+import { FeedbacksParams } from "@/Pages/TabTables";
 
 export type GetReportColumnType = typeof getColumns;
 type GetReportColumnArgsType = {
@@ -14,11 +15,13 @@ type GetReportColumnArgsType = {
       valuation: string;
     }
   >;
+  setFeedbacksParams: React.Dispatch<React.SetStateAction<FeedbacksParams>>;
 };
 
 export const getColumns = ({
   chosenProducts,
   rating,
+  setFeedbacksParams,
 }: GetReportColumnArgsType): ColumnType<TableStatRowInfoType>[] => [
   {
     title: "Бар-код",
@@ -41,6 +44,7 @@ export const getColumns = ({
         value={value}
         record={record}
         rating={rating[record.nmId]}
+        setFeedbacksParams={setFeedbacksParams}
       />
     ),
   },
