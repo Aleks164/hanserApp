@@ -5,16 +5,16 @@ import DatePiker from "@/components/DatePicker/DatePiker";
 import ExcelImporter from "@/components/ExcelImporter";
 import CurrentDate from "./CurrentDate";
 import getCategoriesByDateRange from "@/requestDataHelpers/getCategoriesByDateRange";
-import onSetData, { TableStatRowInfoType } from "./onSetData";
+import onSetData from "./onSetData";
 import { getColumns } from "@/constants/columns/getColumns";
-import { dateFormat } from "@/constants";
+import { MergeItem, dateFormat } from "@/constants";
 import dayjs from "dayjs";
 import { $chosenProducts, $calendarDate } from "@/store";
 import { useStore } from "effector-react";
 import getRatingByNmId, {
   RATING_PATH_NAMES,
 } from "@/requestDataHelpers/getRatingByNmId";
-import { DiffOutlined } from "@ant-design/icons";
+import { DragOutlined, VerticalAlignMiddleOutlined } from "@ant-design/icons";
 import styles from "./styles.module.css";
 import getFeedbacksByNmId, {
   FEEDBACK_PATH_NAMES,
@@ -23,6 +23,9 @@ import getFeedbacksByNmId, {
 } from "@/requestDataHelpers/getFeedbacksByNmId";
 import getImgSrc from "@/constants/getImageSrc";
 import Meta from "antd/es/card/Meta";
+import { SalesType, OrdersType, StocksType } from "@/globals";
+import getMergedDataUnitedByNmid from "./getMergedDataUnitedByNmid";
+import getMergedDataWithFullStockItems from "./getMergedDataWithFullStockItems";
 
 export interface Rating {
   valuation: string;
@@ -45,9 +48,21 @@ export interface FeedbacksParams {
   data?: Feedback[];
 }
 
+export interface ItemsMap {
+  sales: SalesType[];
+  orders: OrdersType[];
+  stocks: StocksType[];
+}
+
 function TabTables() {
-  const [itemsList, setItemsList] = useState<TableStatRowInfoType[]>([]);
+  const [itemsListMap, setItemsListMap] = useState<ItemsMap>({
+    sales: [],
+    orders: [],
+    stocks: [],
+  });
   const [isStockFilterOn, setIsStockFilterOn] = useState(false);
+  const [filteredData, setFilteredData] = useState<MergeItem[]>([]);
+  const [currentFilter, setCurrentFilter] = useState<string>("byNmId");
   const [feedbacksParams, setFeedbacksParams] = useState<FeedbacksParams>({});
   const [isLoading, setIsLoading] = useState(false);
   const [currentPageParams, setCurrentPageParams] = useState<PageParams>(
@@ -63,7 +78,7 @@ function TabTables() {
     (fromDate: string, toDate: string) =>
       onSetData(
         { fromDate, toDate },
-        setItemsList,
+        setItemsListMap,
         getCategoriesByDateRange,
         setIsLoading
       ),
@@ -99,11 +114,11 @@ function TabTables() {
 
   useEffect(() => {
     let { pageSize, currentDataSource, current } = currentPageParams;
-    if (!currentDataSource && !itemsList.length) return;
-    if (!currentDataSource && itemsList.length) {
+    if (!currentDataSource && !filteredData.length) return;
+    if (!currentDataSource && filteredData.length) {
       current = 1;
       pageSize = 10;
-      currentDataSource = itemsList;
+      currentDataSource = filteredData;
     }
 
     currentDataSource = currentDataSource.slice(
@@ -125,7 +140,19 @@ function TabTables() {
       setRatingMap(parsedItems);
     }
     getRating();
-  }, [itemsList, currentPageParams]);
+  }, [filteredData, currentPageParams]);
+
+  useEffect(() => {
+    if (currentFilter === "byNmId") {
+      const newFilteredData = getMergedDataUnitedByNmid({ ...itemsListMap });
+      setFilteredData(newFilteredData);
+    } else {
+      const newFilteredData = getMergedDataWithFullStockItems({
+        ...itemsListMap,
+      });
+      setFilteredData(newFilteredData);
+    }
+  }, [currentFilter, itemsListMap]);
 
   return (
     <div style={{ marginTop: 10 }}>
@@ -134,18 +161,35 @@ function TabTables() {
         <CurrentDate firstDate={firstDate} secondDate={secondDate} />
         <Row className={styles.button_container}>
           <ExcelImporter
-            data={itemsList}
+            data={filteredData}
             fileName={dayjs(new Date()).format(dateFormat)}
           />
           <Tooltip
-            title={"Убрать склад без заказов и продаж за текущий период"}
+            title={
+              !currentFilter
+                ? "Включить группировку по Артикулу WB"
+                : "Включить полный отчёт"
+            }
             placement="right"
           >
-            <Button disabled type="primary" icon={<DiffOutlined />} />
+            <Button
+              type="primary"
+              icon={
+                currentFilter ? (
+                  <VerticalAlignMiddleOutlined />
+                ) : (
+                  <DragOutlined />
+                )
+              }
+              onClick={() => {
+                if (!currentFilter) setCurrentFilter("byNmId");
+                else setCurrentFilter("");
+              }}
+            />
           </Tooltip>
         </Row>
         <DataTable
-          itemsList={itemsList}
+          itemsList={filteredData}
           setCurrentPageParams={setCurrentPageParams}
           columns={getColumns({
             chosenProducts,

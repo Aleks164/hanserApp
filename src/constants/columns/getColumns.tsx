@@ -2,8 +2,8 @@ import React from "react";
 import { ColumnType } from "antd/es/table";
 import { ChosenProductsType } from "@/store/StatStoreContext";
 import ProductImage from "@/components/ProductImage";
-import { TableStatRowInfoType } from "@/Pages/TabTables/onSetData";
 import { FeedbacksParams } from "@/Pages/TabTables";
+import { TableStatRowInfoType } from "@/globals";
 
 export type GetReportColumnType = typeof getColumns;
 type GetReportColumnArgsType = {

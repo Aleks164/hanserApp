@@ -19,3 +19,20 @@ export const pathNameDictionary: Record<PATH_NAMES, string> = {
     [PATH_NAMES.ORDERS]: "Заказы"
 };
 export const dateFormat = "YYYY-MM-DD";
+
+export const mergeItem = {
+    "barcode": "---",
+    "subject": "",
+    "supplierArticle": "",
+    "techSize": "---",
+    "warehouseName": "---",
+    "nmId": 0,
+    "quantity": 0,
+    "inWayFromClient": 0,
+    "finishedPrice": 0,
+    "orderQuantity": 0,
+    "isCancel": 0,
+    "saleQuantity": 0,
+}
+
+export type MergeItem = typeof mergeItem;
