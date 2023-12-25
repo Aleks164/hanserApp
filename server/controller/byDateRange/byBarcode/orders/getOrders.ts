@@ -7,7 +7,7 @@ export default function getOrdersDataByDateRange(fromDate: string, toDate: strin
             '$match': {
                 'date': {
                     '$gte': new Date(fromDate),
-                    '$lte': fromDate === toDate ? getNextDayDate(toDate) : new Date(toDate)
+                    '$lte': getNextDayDate(toDate)
                 }
             }
         }, {

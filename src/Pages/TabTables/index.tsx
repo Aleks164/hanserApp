@@ -14,7 +14,11 @@ import { useStore } from "effector-react";
 import getRatingByNmId, {
   RATING_PATH_NAMES,
 } from "@/requestDataHelpers/getRatingByNmId";
-import { DragOutlined, VerticalAlignMiddleOutlined } from "@ant-design/icons";
+import {
+  DragOutlined,
+  PicCenterOutlined,
+  VerticalAlignMiddleOutlined,
+} from "@ant-design/icons";
 import styles from "./styles.module.css";
 import getFeedbacksByNmId, {
   FEEDBACK_PATH_NAMES,
@@ -26,6 +30,7 @@ import Meta from "antd/es/card/Meta";
 import { SalesType, OrdersType, StocksType } from "@/globals";
 import getMergedDataUnitedByNmid from "./getMergedDataUnitedByNmid";
 import getMergedDataWithFullStockItems from "./getMergedDataWithFullStockItems";
+import getMergedData from "./getMergedData";
 
 export interface Rating {
   valuation: string;
@@ -146,8 +151,13 @@ function TabTables() {
     if (currentFilter === "byNmId") {
       const newFilteredData = getMergedDataUnitedByNmid({ ...itemsListMap });
       setFilteredData(newFilteredData);
-    } else {
+    } else if (currentFilter === "byFullStock") {
       const newFilteredData = getMergedDataWithFullStockItems({
+        ...itemsListMap,
+      });
+      setFilteredData(newFilteredData);
+    } else {
+      const newFilteredData = getMergedData({
         ...itemsListMap,
       });
       setFilteredData(newFilteredData);
@@ -167,8 +177,10 @@ function TabTables() {
           <Tooltip
             title={
               !currentFilter
-                ? "Включить группировку по Артикулу WB"
-                : "Включить полный отчёт"
+                ? currentFilter === "byNmId"
+                  ? "Включить группировку по Артикулу WB"
+                  : "Включить группировку по складам"
+                : "Без группировки"
             }
             placement="right"
           >
@@ -176,13 +188,18 @@ function TabTables() {
               type="primary"
               icon={
                 currentFilter ? (
-                  <VerticalAlignMiddleOutlined />
+                  currentFilter === "byNmId" ? (
+                    <VerticalAlignMiddleOutlined />
+                  ) : (
+                    <PicCenterOutlined />
+                  )
                 ) : (
                   <DragOutlined />
                 )
               }
               onClick={() => {
                 if (!currentFilter) setCurrentFilter("byNmId");
+                else if ("byNmId") setCurrentFilter("byFullStock");
                 else setCurrentFilter("");
               }}
             />
