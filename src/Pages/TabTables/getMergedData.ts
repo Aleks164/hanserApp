@@ -7,10 +7,9 @@ function getMergedData({ sales, stocks, orders }: { sales: SalesType[], stocks: 
 
     sales.forEach(sales => {
         if (!mergeData[sales.barcode]) {
-            const { subject, techSize, supplierArticle, nmId, finishedPrice } = sales;
             mergeData[sales.barcode] = {
                 ...mergeItem,
-                subject, supplierArticle, nmId, finishedPrice, saleQuantity: 1
+                ...sales, saleQuantity: 1
             }
         } else {
             mergeData[sales.barcode].saleQuantity += 1;
@@ -19,10 +18,10 @@ function getMergedData({ sales, stocks, orders }: { sales: SalesType[], stocks: 
 
     orders.forEach(order => {
         if (!mergeData[order.barcode]) {
-            const { subject, supplierArticle, nmId, isCancel } = order;
+            const { isCancel } = order;
             mergeData[order.barcode] = {
                 ...mergeItem,
-                subject, supplierArticle, nmId, orderQuantity: 1, isCancel: +isCancel
+                ...order, orderQuantity: 1, isCancel: +isCancel
             }
         } else {
             const { isCancel } = order;
@@ -33,10 +32,9 @@ function getMergedData({ sales, stocks, orders }: { sales: SalesType[], stocks: 
 
     stocks.forEach(stock => {
         if (!mergeData[stock.barcode]) {
-            const { subject, supplierArticle, nmId, quantity, inWayFromClient } = stock;
             mergeData[stock.barcode] = {
                 ...mergeItem,
-                subject, supplierArticle, nmId, quantity, inWayFromClient
+                ...stock
             }
         } else {
             const { quantity, inWayFromClient } = stock;

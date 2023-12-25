@@ -119,7 +119,8 @@ export const getColumns = ({
     dataIndex: "finishedPrice",
     key: "finishedPrice",
     width: 85,
-    render: (value) => (value && (+value).toFixed()) || 0,
+    render: (value) =>
+      value === "---" ? value : (value && (+value).toFixed()) || 0,
     sorter: (a, b) => a.finishedPrice - b.finishedPrice,
   },
   {

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Avatar, Button, Card, Modal, Row, Tooltip } from "antd";
+import { Avatar, Card, Modal, Radio, RadioChangeEvent, Row } from "antd";
 import DataTable from "@/components/DataTable/Index";
 import DatePiker from "@/components/DatePicker/DatePiker";
 import ExcelImporter from "@/components/ExcelImporter";
@@ -14,11 +14,6 @@ import { useStore } from "effector-react";
 import getRatingByNmId, {
   RATING_PATH_NAMES,
 } from "@/requestDataHelpers/getRatingByNmId";
-import {
-  DragOutlined,
-  PicCenterOutlined,
-  VerticalAlignMiddleOutlined,
-} from "@ant-design/icons";
 import styles from "./styles.module.css";
 import getFeedbacksByNmId, {
   FEEDBACK_PATH_NAMES,
@@ -58,6 +53,12 @@ export interface ItemsMap {
   orders: OrdersType[];
   stocks: StocksType[];
 }
+
+const optionsWithDisabled = [
+  { label: "По Артикулу WB", value: "byNmId" },
+  { label: "По складам", value: "byFullStock" },
+  { label: "Без группировки", value: "default" },
+];
 
 function TabTables() {
   const [itemsListMap, setItemsListMap] = useState<ItemsMap>({
@@ -146,7 +147,6 @@ function TabTables() {
     }
     getRating();
   }, [filteredData, currentPageParams]);
-
   useEffect(() => {
     if (currentFilter === "byNmId") {
       const newFilteredData = getMergedDataUnitedByNmid({ ...itemsListMap });
@@ -164,6 +164,10 @@ function TabTables() {
     }
   }, [currentFilter, itemsListMap]);
 
+  const onChangeFilter = ({ target: { value } }: RadioChangeEvent) => {
+    setCurrentFilter(value);
+  };
+
   return (
     <div style={{ marginTop: 10 }}>
       <Row>
@@ -174,36 +178,14 @@ function TabTables() {
             data={filteredData}
             fileName={dayjs(new Date()).format(dateFormat)}
           />
-          <Tooltip
-            title={
-              !currentFilter
-                ? currentFilter === "byNmId"
-                  ? "Включить группировку по Артикулу WB"
-                  : "Включить группировку по складам"
-                : "Без группировки"
-            }
-            placement="right"
-          >
-            <Button
-              type="primary"
-              icon={
-                currentFilter ? (
-                  currentFilter === "byNmId" ? (
-                    <VerticalAlignMiddleOutlined />
-                  ) : (
-                    <PicCenterOutlined />
-                  )
-                ) : (
-                  <DragOutlined />
-                )
-              }
-              onClick={() => {
-                if (!currentFilter) setCurrentFilter("byNmId");
-                else if ("byNmId") setCurrentFilter("byFullStock");
-                else setCurrentFilter("");
-              }}
-            />
-          </Tooltip>
+          <Radio.Group
+            style={{ marginLeft: 20 }}
+            options={optionsWithDisabled}
+            onChange={onChangeFilter}
+            value={currentFilter}
+            optionType="button"
+            buttonStyle="solid"
+          />
         </Row>
         <DataTable
           itemsList={filteredData}

@@ -35,4 +35,20 @@ export const mergeItem = {
     "saleQuantity": 0,
 }
 
+export const stockItem = {
+    "barcode": "---",
+    "subject": "---",
+    "supplierArticle": "---",
+    "techSize": "---",
+    "warehouseName": "---",
+    "nmId": "---",
+    "quantity": 0,
+    "inWayFromClient": 0,
+    "finishedPrice": "---",
+    "orderQuantity": 0,
+    "isCancel": 0,
+    "saleQuantity": 0,
+}
+
 export type MergeItem = typeof mergeItem;
+export type StockItem = typeof stockItem;

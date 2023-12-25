@@ -15,7 +15,6 @@
   display: flex;
   z-index: 5;
   left: 15px;
-  width: 100px;
   justify-content: space-around;
   align-items: center;
   background-color: white;
