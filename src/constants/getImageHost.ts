@@ -10,5 +10,7 @@ export default function getHost(id: number) {
     if (id >= 1170 && id <= 1313) return "//basket-09.wb.ru";
     if (id >= 1314 && id <= 1601) return "//basket-10.wb.ru";
     if (id >= 1602 && id <= 1655) return "//basket-11.wb.ru";
-    return "//basket-12.wb.ru";
+    if (id >= 1656 && id <= 1919) return "//basket-12.wb.ru";
+    if (id >= 1920 && id <= 2045) return "//basket-13.wb.ru";
+    return "//basket-14.wb.ru";
 }

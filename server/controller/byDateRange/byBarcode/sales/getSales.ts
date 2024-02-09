@@ -2,6 +2,7 @@ import { PipelineStage } from "mongoose";
 import { getNextDayDate } from "../../../../utils/getNextDayDate";
 
 export default function getSaleDataByDateRange(fromDate: string, toDate: string): PipelineStage[] {
+
     return [
         {
             '$match': {

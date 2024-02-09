@@ -1,16 +1,16 @@
-import { StockItem, stockItem } from "@/constants";
-import { SalesType, StocksType, OrdersType } from "@/globals"
 
-function getMergedData({ sales, stocks, orders }: { sales: SalesType[], stocks: StocksType[], orders: OrdersType[] }) {
+import { OrdersType, SalesType, StocksType } from "../../../../src/globals";
+import { MergeItem, mergeItem } from "../../../../src/constants/index";
 
-    const mergeData: Record<string, StockItem> = {};
+function getMergedDataByWarehouse({ sales, stocks, orders }: { sales: SalesType[], stocks: StocksType[], orders: OrdersType[] }) {
+
+    const mergeData: Record<string, MergeItem> = {};
 
     sales.forEach(sales => {
         if (!mergeData[sales.warehouseName]) {
-            const { warehouseName } = sales;
-            mergeData[sales.warehouseName] = {
-                ...stockItem, warehouseName,
-                saleQuantity: 1
+            mergeData[sales.barcode] = {
+                ...mergeItem,
+                ...sales, saleQuantity: 1
             }
         } else {
             mergeData[sales.warehouseName].saleQuantity += 1;
@@ -19,10 +19,10 @@ function getMergedData({ sales, stocks, orders }: { sales: SalesType[], stocks: 
 
     orders.forEach(order => {
         if (!mergeData[order.warehouseName]) {
-            const { isCancel, warehouseName } = order;
+            const { isCancel } = order;
             mergeData[order.warehouseName] = {
-                ...stockItem, warehouseName,
-                orderQuantity: 1, isCancel: +isCancel
+                ...mergeItem,
+                ...order, orderQuantity: 1, isCancel: +isCancel
             }
         } else {
             const { isCancel } = order;
@@ -33,18 +33,20 @@ function getMergedData({ sales, stocks, orders }: { sales: SalesType[], stocks: 
 
     stocks.forEach(stock => {
         if (!mergeData[stock.warehouseName]) {
-            const { quantity, inWayFromClient, warehouseName } = stock;
             mergeData[stock.warehouseName] = {
-                ...stockItem,
-                quantity, inWayFromClient, warehouseName
+                ...mergeItem,
+                ...stock
             }
         } else {
-            const { quantity, inWayFromClient } = stock;
+            const { quantity, inWayFromClient, inWayToClient } = stock;
             mergeData[stock.warehouseName].quantity += quantity;
             mergeData[stock.warehouseName].inWayFromClient += inWayFromClient;
+            if (inWayToClient)
+                mergeData[stock.barcode].inWayToClient += inWayToClient;
         }
     })
+
     return Object.values(mergeData);
 }
 
-export default getMergedData;
+export default getMergedDataByWarehouse;

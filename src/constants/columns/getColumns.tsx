@@ -3,26 +3,21 @@ import { ColumnType } from "antd/es/table";
 import { ChosenProductsType } from "@/store/StatStoreContext";
 import ProductImage from "@/components/ProductImage";
 import { FeedbacksParams } from "@/Pages/TabTables";
-import { TableStatRowInfoType } from "@/globals";
+import { MergeItem } from "..";
+import { Row, Button } from "antd";
 
 export type GetReportColumnType = typeof getColumns;
 type GetReportColumnArgsType = {
   chosenProducts: ChosenProductsType;
-  rating: Record<
-    string,
-    {
-      feedbacksCount: number;
-      valuation: string;
-    }
-  >;
   setFeedbacksParams: React.Dispatch<React.SetStateAction<FeedbacksParams>>;
 };
 
+type Re = Required<MergeItem>;
+
 export const getColumns = ({
   chosenProducts,
-  rating,
   setFeedbacksParams,
-}: GetReportColumnArgsType): ColumnType<TableStatRowInfoType>[] => [
+}: GetReportColumnArgsType): ColumnType<MergeItem>[] => [
   {
     title: "Бар-код",
     dataIndex: "barcode",
@@ -40,12 +35,57 @@ export const getColumns = ({
     fixed: "left",
     width: 140,
     render: (value: number, record) => (
-      <ProductImage
-        value={value}
-        record={record}
-        rating={rating[record.nmId]}
-        setFeedbacksParams={setFeedbacksParams}
-      />
+      <ProductImage value={value} record={record} />
+    ),
+  },
+  {
+    title: "Рейтинг",
+    dataIndex: "valuation",
+    key: "valuation",
+    fixed: "left",
+    width: 140,
+    sorter: (a, b) => a.nmId - b.nmId,
+    render: (value: number, record) => (
+      <>
+        {"⭐️"} {record?.valuation || "-"}
+      </>
+    ),
+  },
+  {
+    title: "Отзывы",
+    dataIndex: "feedbacksCount",
+    key: "feedbacksCount",
+    fixed: "left",
+    width: 140,
+    sorter: (a, b) => a.nmId - b.nmId,
+    render: (value: number, record) => (
+      <Row
+        style={{
+          minWidth: 55,
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}
+      >
+        <Button
+          style={{
+            width: 20,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onClick={() =>
+            setFeedbacksParams((prevState) => ({
+              ...prevState,
+              visible: true,
+              nmid: record.nmId,
+            }))
+          }
+        >
+          {"💬"}
+        </Button>{" "}
+        {record.feedbacksCount || "-"}
+      </Row>
     ),
   },
   {

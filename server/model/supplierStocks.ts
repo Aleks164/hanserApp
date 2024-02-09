@@ -99,6 +99,7 @@ const supplierOrdersSchema = new mongoose.Schema({
      */
     discount: Number,
     inWayFromClient: Number,
+    inWayToClient: Number,
     Price: Number,
     Discount: Number,
     SCCode: String,

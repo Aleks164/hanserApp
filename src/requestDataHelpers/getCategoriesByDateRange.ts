@@ -4,7 +4,7 @@ export enum PATH_NAMES {
     SALES = 'sales', ORDERS = 'orders', STOCKS = 'stocks', REPORT_DETAILS = 'reports'
 }
 
-function getCategoriesByDateRange(pathName: PATH_NAMES, queryParams?: { fromDate: any; toDate: any; }) {
+export function getCategoriesByDateRange(pathName: PATH_NAMES, queryParams?: { fromDate: any; toDate: any; }) {
     if (!queryParams) return fetch(`${HOST_NAME}/${pathName}`, {
         method: "GET",
     });
@@ -14,5 +14,10 @@ function getCategoriesByDateRange(pathName: PATH_NAMES, queryParams?: { fromDate
     })
 }
 
-export default getCategoriesByDateRange;
+export const pathNameDictionary: Record<PATH_NAMES, string> = {
+    [PATH_NAMES.SALES]: 'Продажи',
+    [PATH_NAMES.STOCKS]: "Склад",
+    [PATH_NAMES.REPORT_DETAILS]: "Отчет о продажах по реализации",
+    [PATH_NAMES.ORDERS]: "Заказы"
+};
 

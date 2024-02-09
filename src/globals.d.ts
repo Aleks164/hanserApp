@@ -1,8 +1,5 @@
 
 import { calendarTypes, datePickerDictionary, dateFormat } from "@/constants";
-import {
-  PATH_NAMES,
-} from "@/requestDataHelpers/getCategoriesByDateRange";
 import { ColumnType } from "antd/es/table";
 import { OrdersItem } from "../../../commonTypes/api";
 import dayjs from "dayjs";
@@ -62,6 +59,7 @@ export interface StocksType {
   "supplierArticle": string,
   "nmId": number,
   "inWayFromClient": number,
+  "inWayToClient": number,
   "quantity": number
 }
 

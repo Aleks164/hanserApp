@@ -8,11 +8,12 @@
 .goods_info_container {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .goods_pictures_container {
   display: flex;
   cursor: pointer;
   padding-right: 3px;
-  width: 90px;
+  width: 35px;
 }

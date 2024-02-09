@@ -1,31 +1,30 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Avatar, Card, Modal, Radio, RadioChangeEvent, Row } from "antd";
+import React, { useEffect, useState } from "react";
+import { Radio, RadioChangeEvent, Row } from "antd";
+import dayjs from "dayjs";
+
 import DataTable from "@/components/DataTable/Index";
 import DatePiker from "@/components/DatePicker/DatePiker";
 import ExcelImporter from "@/components/ExcelImporter";
 import CurrentDate from "./CurrentDate";
-import getCategoriesByDateRange from "@/requestDataHelpers/getCategoriesByDateRange";
-import onSetData from "./onSetData";
 import { getColumns } from "@/constants/columns/getColumns";
-import { MergeItem, dateFormat } from "@/constants";
-import dayjs from "dayjs";
+import { dateFormat } from "@/constants";
 import { $chosenProducts, $calendarDate } from "@/store";
 import { useStore } from "effector-react";
-import getRatingByNmId, {
-  RATING_PATH_NAMES,
-} from "@/requestDataHelpers/getRatingByNmId";
 import styles from "./styles.module.css";
+import {
+  SalesType,
+  OrdersType,
+  StocksType,
+  CalendarType,
+  DateTypeByCalendarType,
+} from "@/globals";
+import useStatistics from "./useStatistics";
+import Feedbacks from "./Feedbacks";
 import getFeedbacksByNmId, {
-  FEEDBACK_PATH_NAMES,
   Feedback,
+  FEEDBACK_PATH_NAMES,
   FeedbackData,
 } from "@/requestDataHelpers/getFeedbacksByNmId";
-import getImgSrc from "@/constants/getImageSrc";
-import Meta from "antd/es/card/Meta";
-import { SalesType, OrdersType, StocksType } from "@/globals";
-import getMergedDataUnitedByNmid from "./getMergedDataUnitedByNmid";
-import getMergedDataWithFullStockItems from "./getMergedDataWithFullStockItems";
-import getMergedData from "./getMergedData";
 
 export interface Rating {
   valuation: string;
@@ -54,6 +53,8 @@ export interface ItemsMap {
   stocks: StocksType[];
 }
 
+export type Filters = "byWarehouse" | "byNmid" | "byBarCode";
+
 const optionsWithDisabled = [
   { label: "По Артикулу WB", value: "byNmId" },
   { label: "По складам", value: "byFullStock" },
@@ -61,35 +62,14 @@ const optionsWithDisabled = [
 ];
 
 function TabTables() {
-  const [itemsListMap, setItemsListMap] = useState<ItemsMap>({
-    sales: [],
-    orders: [],
-    stocks: [],
-  });
-  const [isStockFilterOn, setIsStockFilterOn] = useState(false);
-  const [filteredData, setFilteredData] = useState<MergeItem[]>([]);
-  const [currentFilter, setCurrentFilter] = useState<string>("byNmId");
+  const [currentFilter, setCurrentFilter] = useState<Filters>("byNmid");
   const [feedbacksParams, setFeedbacksParams] = useState<FeedbacksParams>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentPageParams, setCurrentPageParams] = useState<PageParams>(
-    {} as PageParams
+  const [date, setDate] = useState<DateTypeByCalendarType<CalendarType> | null>(
+    null
   );
-  const [ratingMap, setRatingMap] = useState<
-    Record<string, { feedbacksCount: number; valuation: string }>
-  >({});
-
   const chosenProducts = useStore($chosenProducts);
-  const [firstDate, secondDate] = useStore($calendarDate);
-  const onSetDataHandler = useCallback(
-    (fromDate: string, toDate: string) =>
-      onSetData(
-        { fromDate, toDate },
-        setItemsListMap,
-        getCategoriesByDateRange,
-        setIsLoading
-      ),
-    []
-  );
+
+  const { tableData, isLoading } = useStatistics({ date, currentFilter });
 
   useEffect(() => {
     if (!feedbacksParams.visible || !feedbacksParams.nmid) return;
@@ -118,64 +98,18 @@ function TabTables() {
     feedbacksParams.nmid,
   ]);
 
-  useEffect(() => {
-    let { pageSize, currentDataSource, current } = currentPageParams;
-    if (!currentDataSource && !filteredData.length) return;
-    if (!currentDataSource && filteredData.length) {
-      current = 1;
-      pageSize = 10;
-      currentDataSource = filteredData;
-    }
-
-    currentDataSource = currentDataSource.slice(
-      (current - 1) * pageSize,
-      pageSize * current
-    );
-
-    const newRatingMap: Record<string, string> = {};
-    currentDataSource.forEach((el) => {
-      if (el.nmId) newRatingMap[el.nmId] = el.nmId;
-    });
-    async function getRating() {
-      const nmidAsString = Object.keys(newRatingMap).join(",");
-      const ratingItems = await getRatingByNmId(
-        RATING_PATH_NAMES.RATING,
-        nmidAsString
-      );
-      const parsedItems = await ratingItems.json();
-      setRatingMap(parsedItems);
-    }
-    getRating();
-  }, [filteredData, currentPageParams]);
-  useEffect(() => {
-    if (currentFilter === "byNmId") {
-      const newFilteredData = getMergedDataUnitedByNmid({ ...itemsListMap });
-      setFilteredData(newFilteredData);
-    } else if (currentFilter === "byFullStock") {
-      const newFilteredData = getMergedDataWithFullStockItems({
-        ...itemsListMap,
-      });
-      setFilteredData(newFilteredData);
-    } else {
-      const newFilteredData = getMergedData({
-        ...itemsListMap,
-      });
-      setFilteredData(newFilteredData);
-    }
-  }, [currentFilter, itemsListMap]);
-
   const onChangeFilter = ({ target: { value } }: RadioChangeEvent) => {
     setCurrentFilter(value);
   };
-
+  console.log(date);
   return (
     <div style={{ marginTop: 10 }}>
       <Row>
-        <DatePiker onSetData={onSetDataHandler} />
-        <CurrentDate firstDate={firstDate} secondDate={secondDate} />
+        <DatePiker date={date} setDate={setDate} />
+        <CurrentDate date={date} />
         <Row className={styles.button_container}>
           <ExcelImporter
-            data={filteredData}
+            data={tableData}
             fileName={dayjs(new Date()).format(dateFormat)}
           />
           <Radio.Group
@@ -188,80 +122,17 @@ function TabTables() {
           />
         </Row>
         <DataTable
-          itemsList={filteredData}
-          setCurrentPageParams={setCurrentPageParams}
+          itemsList={tableData}
           columns={getColumns({
             chosenProducts,
-            rating: ratingMap,
             setFeedbacksParams,
           })}
           loading={isLoading}
         />
-        <Modal
-          open={feedbacksParams.visible}
-          title="Отзывы"
-          cancelText="Закрыть"
-          okButtonProps={{ style: { display: "none" } }}
-          onCancel={() =>
-            setFeedbacksParams((prevState) => ({
-              ...prevState,
-              visible: false,
-            }))
-          }
-        >
-          {feedbacksParams.data &&
-            feedbacksParams.data
-              .filter((feedback) => feedback.text)
-              .map((feedback) => {
-                return (
-                  <div key={feedback.id}>
-                    <Card style={{ marginTop: 16 }}>
-                      <Meta
-                        avatar={
-                          <Avatar
-                            src={getImgSrc(feedback.productDetails.nmId)}
-                          />
-                        }
-                        title={
-                          <div className={styles.feedback_header}>
-                            {feedback.userName}
-                            {"   "}
-                            {dayjs(feedback.createdDate).format(
-                              "YYYY-MM-DD HH:mm"
-                            )}
-                          </div>
-                        }
-                        description={
-                          <>
-                            <div className={styles.feedback_header_title}>
-                              <span>
-                                {feedback.productDetails.productName}{" "}
-                                {feedback.productDetails.size}
-                              </span>
-                              <br />
-                              <span>
-                                {feedback.productDetails.supplierArticle}
-                              </span>
-                              <br />
-                              <span>
-                                {"Поставщик: "}
-                                {feedback.productDetails.supplierName}{" "}
-                              </span>
-                            </div>
-                            <div className={styles.feedback_body_text}>
-                              {feedback.text}
-                            </div>
-                            <div className={styles.feedback_body_answer}>
-                              {feedback.answer?.text}
-                            </div>
-                          </>
-                        }
-                      />
-                    </Card>
-                  </div>
-                );
-              })}
-        </Modal>
+        <Feedbacks
+          feedbacksParams={feedbacksParams}
+          setFeedbacksParams={setFeedbacksParams}
+        />
       </Row>
     </div>
   );

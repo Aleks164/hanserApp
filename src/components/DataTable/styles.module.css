@@ -7,10 +7,8 @@
   text-align: center;
 }
 
-.table_row:nth-child(2n) td {
-  background-color: #d3d3d3 !important;
-}
-
-.table_row:nth-child(2n-1) td {
-  background-color: #ececec !important;
+.table_row td {
+  border-right: 1px solid #e1dede !important;
+  border-bottom: 1px solid #bebebe !important;
+  background-color: #ededed !important;
 }

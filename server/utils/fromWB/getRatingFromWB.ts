@@ -18,7 +18,7 @@ export interface WBRating {
   "error"?: boolean
 }
 
-async function getRatingFromWB(nmid: string) {
+async function getRatingFromWB(nmid: string | number) {
   try {
     const responseJson = await fetch(
       `https://feedbacks-api.wildberries.ru/api/v1/feedbacks/products/rating/nmid?nmId=${nmid}`,

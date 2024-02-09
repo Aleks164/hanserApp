@@ -1,36 +1,35 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, DatePicker, Row, Select, Space } from "antd";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import getCurrentDateByCalendarType from "./getCurrentDateByCalendarType";
 import { calendarTypes, dateFormat, datePickerDictionary } from "@/constants";
-import {
-  DatePikerParamsType,
-  DateTypeByCalendarType,
-  CalendarType,
-} from "@/globals";
+import { DateTypeByCalendarType, CalendarType } from "@/globals";
 import { CaretUpOutlined, CaretDownOutlined } from "@ant-design/icons";
 dayjs.extend(weekday);
 
 const { RangePicker } = DatePicker;
 
-function DatePiker({ onSetData = () => {} }: DatePikerParamsType) {
-  const [date, setDate] = useState<DateTypeByCalendarType<CalendarType> | null>(
-    null
-  );
+function DatePiker({
+  date,
+  setDate,
+}: {
+  date: DateTypeByCalendarType<"date" | "week" | "month" | "range"> | null;
+  setDate: React.Dispatch<
+    React.SetStateAction<DateTypeByCalendarType<
+      "date" | "week" | "month" | "range"
+    > | null>
+  >;
+}) {
   const [currentCalendarType, setCalendarType] = useState<CalendarType | null>(
-    null
+    "week"
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const changeDate = (value: dayjs.Dayjs | null, dateString: string) => {
     if (!value || !currentCalendarType || currentCalendarType === "range")
       return;
-    const { onChangeArguments } = getCurrentDateByCalendarType(
-      currentCalendarType,
-      value
-    );
-    onSetData(...onChangeArguments);
+    console.log("changeDate");
     setDate(value);
   };
 
@@ -45,7 +44,7 @@ function DatePiker({ onSetData = () => {} }: DatePikerParamsType) {
       currentCalendarType !== "range"
     )
       return;
-    onSetData(...dateString);
+    console.log("changeDateRange");
     setDate(value as [dayjs.Dayjs, dayjs.Dayjs]);
   };
 
@@ -59,16 +58,19 @@ function DatePiker({ onSetData = () => {} }: DatePikerParamsType) {
     prevWeekMonday.setDate(
       prevWeekMonday.getDate() - ((prevWeekMonday.getDay() + 6) % 7) - 7
     );
-
-    setCalendarType("week");
-    setDate(dayjs(prevWeekMonday));
+    const prevWeekSunday = new Date(prevWeekMonday);
+    prevWeekSunday.setDate(prevWeekMonday.getDate() + 6);
+    console.log("start");
+    setDate([dayjs(prevWeekMonday), dayjs(prevWeekSunday)]);
   }, []);
 
   useEffect(() => {
     if (!date || !currentCalendarType) return;
-    const { currentDateByCalendarType, onChangeArguments } =
-      getCurrentDateByCalendarType(currentCalendarType, date);
-    onSetData(...onChangeArguments);
+    const { currentDateByCalendarType } = getCurrentDateByCalendarType(
+      currentCalendarType,
+      date
+    );
+    console.log("changeCurrentCalendarType");
     setDate(currentDateByCalendarType);
   }, [currentCalendarType]);
 

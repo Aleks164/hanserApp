@@ -1,23 +1,18 @@
 import express from "express";
 import cors from "cors";
 import connectToDB from "./utils/connectToDB";
-import updateSupplierStocks from "./controller/updateSupplierStocks";
-import updateSupplierOrders from "./controller/updateSupplierOrders";
-import updateSupplierSales from "./controller/updateSupplierSales";
-import updateSupplierReportDetailByPeriod from "./controller/updateSupplierReportDetailByPeriod";
 import ordersByDateRange from "./controller/byDateRange/byBarcode/orders";
 import reportDetailsByDateRange from "./controller/byDateRange/byBarcode/reportDetails";
 import stocksByDateRange from "./controller/byDateRange/byBarcode/stocks";
 import { CronJob } from "cron";
 import regularUpdateMongoDB from "./utils/regularUpdateMongoDB";
-import https from 'https';
-import fs from 'fs';
-import path from "path";
 import productListByDateRange from "./controller/byDateRange/byBarcode/productList";
-import SupplierStocks from "./model/supplierStocks";
 import salesByDateRange from "./controller/byDateRange/byBarcode/sales";
 import ratingByNmid from "./controller/byDateRange/byBarcode/rating";
 import feedbacksByNmid from "./controller/byDateRange/byBarcode/feedback";
+import statisticsByDateRange from "./controller/byDateRange/statistics";
+import DBRequestCache from "./utils/cache";
+import updateMissingRatings from "./utils/updateMissingRatings";
 
 const app = express();
 const port = 80;
@@ -35,7 +30,9 @@ app.use("/sales", salesByDateRange);
 app.use("/reports", reportDetailsByDateRange);
 app.use("/rating", ratingByNmid);
 app.use("/feedback", feedbacksByNmid);
-app.use("/products_list", productListByDateRange);
+app.use("/productsList", productListByDateRange);
+app.use("/statistics", statisticsByDateRange);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -47,9 +44,15 @@ app.get("*", (req, res) => {
 
 const job = new CronJob('0 55 6 * * *', async function () {
   console.log('start', new Date());
+  DBRequestCache.flushAll();
   await regularUpdateMongoDB();
   console.log('end', new Date());
 });
+
+setTimeout(() => {
+  console.log('start')
+  updateMissingRatings();
+}, 15000);
 
 
 job.start();
@@ -60,5 +63,4 @@ app.listen(port, async () => {
   await connectToDB();
   console.log(`Listening on port ${port}`);
 });
-
 
