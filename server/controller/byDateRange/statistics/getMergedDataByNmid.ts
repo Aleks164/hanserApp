@@ -50,8 +50,8 @@ function getMergedDataByNmid({ sales, stocks, orders, ratings }: { sales: SalesT
 
     ratings.forEach(rating => {
         if (mergeData[rating.nmId]) {
-            mergeData[rating.nmId].valuation = rating.valuation;
-            mergeData[rating.nmId].feedbacksCount = rating.feedbacksCount;
+            mergeData[rating.nmId].valuation = rating.valuation || "0";
+            mergeData[rating.nmId].feedbacksCount = rating.feedbacksCount || 0;
         }
     });
 

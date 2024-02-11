@@ -31,12 +31,9 @@ async function getRatingFromWB(nmid: string | number) {
       }
     );
     const salesListFromWB = (await responseJson.json()) as WBRating;
-    const valuation = salesListFromWB?.data?.valuation;
-    const feedbacksCount = salesListFromWB?.data?.feedbacksCount;
-    console.log(salesListFromWB)
-    if (!valuation || !feedbacksCount) return { valuation, feedbacksCount, error: true };
-    salesListFromWB.error = true;
-    return { valuation, feedbacksCount, nmId: +nmid };
+    const valuation = salesListFromWB?.data?.valuation || "";
+    const feedbacksCount = salesListFromWB?.data?.feedbacksCount || 0;
+    return { valuation, feedbacksCount, nmId: +nmid, error: salesListFromWB.error || false };
   } catch (err) {
     console.log(err);
   }

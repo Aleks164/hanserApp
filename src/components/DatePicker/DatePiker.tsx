@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, DatePicker, Row, Select, Space } from "antd";
 import dayjs from "dayjs";
+
 import weekday from "dayjs/plugin/weekday";
 import getCurrentDateByCalendarType from "./getCurrentDateByCalendarType";
 import { calendarTypes, dateFormat, datePickerDictionary } from "@/constants";
@@ -14,23 +15,21 @@ function DatePiker({
   date,
   setDate,
 }: {
-  date: DateTypeByCalendarType<"date" | "week" | "month" | "range"> | null;
-  setDate: React.Dispatch<
-    React.SetStateAction<DateTypeByCalendarType<
-      "date" | "week" | "month" | "range"
-    > | null>
-  >;
+  date: [string, string] | null;
+  setDate: React.Dispatch<React.SetStateAction<[string, string] | null>>;
 }) {
   const [currentCalendarType, setCalendarType] = useState<CalendarType | null>(
     "week"
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [innerDate, setInnerDate] = useState<DateTypeByCalendarType<
+    "date" | "week" | "month" | "range"
+  > | null>(null);
 
   const changeDate = (value: dayjs.Dayjs | null, dateString: string) => {
     if (!value || !currentCalendarType || currentCalendarType === "range")
       return;
-    console.log("changeDate");
-    setDate(value);
+    setInnerDate(value);
   };
 
   const changeDateRange = (
@@ -44,8 +43,7 @@ function DatePiker({
       currentCalendarType !== "range"
     )
       return;
-    console.log("changeDateRange");
-    setDate(value as [dayjs.Dayjs, dayjs.Dayjs]);
+    setInnerDate(value as [dayjs.Dayjs, dayjs.Dayjs]);
   };
 
   const toggleCalendarType = useCallback(
@@ -58,26 +56,21 @@ function DatePiker({
     prevWeekMonday.setDate(
       prevWeekMonday.getDate() - ((prevWeekMonday.getDay() + 6) % 7) - 7
     );
-    const prevWeekSunday = new Date(prevWeekMonday);
-    prevWeekSunday.setDate(prevWeekMonday.getDate() + 6);
-    console.log("start");
-    setDate([dayjs(prevWeekMonday), dayjs(prevWeekSunday)]);
+    setInnerDate(dayjs(prevWeekMonday));
   }, []);
 
   useEffect(() => {
-    if (!date || !currentCalendarType) return;
-    const { currentDateByCalendarType } = getCurrentDateByCalendarType(
+    if (!innerDate || !currentCalendarType) return;
+    const { beginAndEndDateAsString } = getCurrentDateByCalendarType(
       currentCalendarType,
-      date
+      innerDate
     );
-    console.log("changeCurrentCalendarType");
-    setDate(currentDateByCalendarType);
-  }, [currentCalendarType]);
-
+    setDate(beginAndEndDateAsString);
+  }, [currentCalendarType, innerDate]);
   return (
     <Space direction="vertical" size="middle" style={{ display: "flex" }}>
       <Row>
-        {date && currentCalendarType && (
+        {innerDate && currentCalendarType && (
           <>
             <Select
               defaultValue="week"
@@ -88,18 +81,22 @@ function DatePiker({
                 label: datePickerDictionary[typeName],
               }))}
             />
-            {currentCalendarType !== "range" && !Array.isArray(date) ? (
+            {currentCalendarType !== "range" && !Array.isArray(innerDate) ? (
               <DatePicker
                 open={isOpen}
-                value={date}
+                value={innerDate}
                 onChange={changeDate}
                 picker={currentCalendarType}
               />
             ) : (
-              Array.isArray(date) && (
+              date && (
                 <RangePicker
                   open={isOpen}
-                  value={date}
+                  value={
+                    Array.isArray(innerDate)
+                      ? innerDate
+                      : [dayjs(date[0]), dayjs(date[1])]
+                  }
                   onChange={changeDateRange}
                   format={dateFormat}
                 />

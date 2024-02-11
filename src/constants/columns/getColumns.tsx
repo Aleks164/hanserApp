@@ -4,15 +4,16 @@ import { ChosenProductsType } from "@/store/StatStoreContext";
 import ProductImage from "@/components/ProductImage";
 import { FeedbacksParams } from "@/Pages/TabTables";
 import { MergeItem } from "..";
-import { Row, Button } from "antd";
+import { Row, Button, Input, Popover } from "antd";
+import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
+
+const { Search } = Input;
 
 export type GetReportColumnType = typeof getColumns;
 type GetReportColumnArgsType = {
   chosenProducts: ChosenProductsType;
   setFeedbacksParams: React.Dispatch<React.SetStateAction<FeedbacksParams>>;
 };
-
-type Re = Required<MergeItem>;
 
 export const getColumns = ({
   chosenProducts,
@@ -43,11 +44,11 @@ export const getColumns = ({
     dataIndex: "valuation",
     key: "valuation",
     fixed: "left",
+    sorter: (a, b) => +(!isNaN(+b.valuation) && +a.valuation - +b.valuation),
     width: 140,
-    sorter: (a, b) => a.nmId - b.nmId,
     render: (value: number, record) => (
       <>
-        {"⭐️"} {record?.valuation || "-"}
+        {"⭐️"} {record?.valuation || 0}
       </>
     ),
   },
@@ -57,7 +58,8 @@ export const getColumns = ({
     key: "feedbacksCount",
     fixed: "left",
     width: 140,
-    sorter: (a, b) => a.nmId - b.nmId,
+    sorter: (a, b) =>
+      +(!isNaN(+b.feedbacksCount) && a.feedbacksCount - b.feedbacksCount),
     render: (value: number, record) => (
       <Row
         style={{
@@ -84,7 +86,7 @@ export const getColumns = ({
         >
           {"💬"}
         </Button>{" "}
-        {record.feedbacksCount || "-"}
+        {record.feedbacksCount || "0"}
       </Row>
     ),
   },
@@ -93,18 +95,14 @@ export const getColumns = ({
     dataIndex: "subject",
     key: "subject",
     width: 90,
-    sorter: (a, b) => {
-      return ("" + a.subject).localeCompare(b.subject);
-    },
+    sorter: (a, b) => ("" + a.subject).localeCompare(b.subject),
   },
   {
     title: "Артикул продавца",
     dataIndex: "supplierArticle",
     key: "supplierArticle",
     width: 125,
-    sorter: (a, b) => {
-      return ("" + a.supplierArticle).localeCompare(b.supplierArticle);
-    },
+    sorter: (a, b) => ("" + a.supplierArticle).localeCompare(b.supplierArticle),
   },
   {
     title: "Артикул WB",
@@ -118,15 +116,19 @@ export const getColumns = ({
         </div>
       );
     },
-    sorter: (a, b) => a.nmId - b.nmId,
+    sorter: {
+      compare: (a, b) => +a.nmId - +b.nmId,
+      multiple: 2,
+    },
   },
   {
     title: "Размер",
     dataIndex: "techSize",
     key: "techSize",
     width: 80,
-    sorter: (a, b) => {
-      return ("" + a.techSize).localeCompare(b.techSize);
+    sorter: {
+      compare: (a, b) => ("" + a.techSize).localeCompare(b.techSize),
+      multiple: 1,
     },
   },
   {

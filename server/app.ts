@@ -42,20 +42,21 @@ app.get("*", (req, res) => {
   res.status(404).send("Sorry, cant find that");
 });
 
-const job = new CronJob('0 55 6 * * *', async function () {
+const regularUpdateMongoDBJob = new CronJob('0 45 6 * * *', async function () {
   console.log('start', new Date());
   DBRequestCache.flushAll();
   await regularUpdateMongoDB();
   console.log('end', new Date());
 });
 
-setTimeout(() => {
-  console.log('start')
-  updateMissingRatings();
-}, 15000);
+const updateMissingRatingsJob = new CronJob('0 55 6 * * *', async function () {
+  console.log('start', new Date());
+  await updateMissingRatings();
+  console.log('end', new Date());
+});
 
-
-job.start();
+regularUpdateMongoDBJob.start();
+updateMissingRatingsJob.start();
 
 // const server = https.createServer(options, app);
 

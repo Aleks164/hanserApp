@@ -10,10 +10,14 @@ import { OrdersItem, SalesItem, StocksItem } from "../../commonTypes/api";
 import getRatingFromWB, { Rating } from "./fromWB/getRatingFromWB";
 
 async function ratingSlowUpdate(nmIds: number[]) {
+    console.log(nmIds.length);
+    const newRatingItems: Rating[] = [];
     const ratingsForUpdate = nmIds.map(nmId => async () => {
-        await getRatingFromWB(nmId);
+        console.log(nmId);
+        const newRatingItem = await getRatingFromWB(nmId);
         await new Promise(res => setTimeout(() => {
-            console.log(nmId);
+            if (newRatingItem)
+                newRatingItems.push(newRatingItem);
             res(nmId);
         }, 500))
     });
@@ -21,6 +25,7 @@ async function ratingSlowUpdate(nmIds: number[]) {
     for (const ratingUpdating of ratingsForUpdate) {
         await ratingUpdating();
     }
+    await SupplierRating.insertMany(newRatingItems.filter(el => el && !el.error));
 };
 
 export default async function updateMissingRatings() {
@@ -51,7 +56,7 @@ export default async function updateMissingRatings() {
     ratings.forEach(rating => {
         allArticles.delete(rating.nmId);
     })
-    console.log(allArticles.size);
+
     await ratingSlowUpdate(Array.from(allArticles));
     console.log('end');
 }

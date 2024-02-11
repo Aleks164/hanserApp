@@ -1,8 +1,8 @@
 // export const HOST_NAME = 'https://hansterstatserver.ru';
 // export const HOST_NAME = 'http://hansterstatserver.ru'; 
-
 // export const HOST_NAME = 'http://81.31.247.81:8880';
-export const HOST_NAME = 'http://localhost:80';
+// export const HOST_NAME = 'http://localhost:80';
+export const HOST_NAME = 'http://81.31.247.81:80';
 export const calendarTypes = ["month", "week", "date", "range"] as const;
 export const diagramPageCalendarTypes = ["month", "week", "date"] as const;
 export const datePickerDictionary = {
@@ -28,7 +28,7 @@ export const mergeItem = {
     "orderQuantity": 0,
     "isCancel": 0,
     "saleQuantity": 0,
-    "valuation": "---",
+    "valuation": "0",
     "feedbacksCount": 0,
 }
 
@@ -46,7 +46,7 @@ export const stockItem = {
     "orderQuantity": 0,
     "isCancel": 0,
     "saleQuantity": 0,
-    "valuation": "---",
+    "valuation": "0",
     "feedbacksCount": 0,
 }
 

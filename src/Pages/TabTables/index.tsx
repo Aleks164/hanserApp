@@ -56,17 +56,15 @@ export interface ItemsMap {
 export type Filters = "byWarehouse" | "byNmid" | "byBarCode";
 
 const optionsWithDisabled = [
-  { label: "По Артикулу WB", value: "byNmId" },
-  { label: "По складам", value: "byFullStock" },
-  { label: "Без группировки", value: "default" },
+  { label: "По Артикулу WB", value: "byNmid" },
+  // { label: "По складам", value: "byWarehouse" },
+  { label: "Без группировки", value: "byBarCode" },
 ];
 
 function TabTables() {
   const [currentFilter, setCurrentFilter] = useState<Filters>("byNmid");
   const [feedbacksParams, setFeedbacksParams] = useState<FeedbacksParams>({});
-  const [date, setDate] = useState<DateTypeByCalendarType<CalendarType> | null>(
-    null
-  );
+  const [date, setDate] = useState<[string, string] | null>(null);
   const chosenProducts = useStore($chosenProducts);
 
   const { tableData, isLoading } = useStatistics({ date, currentFilter });
@@ -101,7 +99,7 @@ function TabTables() {
   const onChangeFilter = ({ target: { value } }: RadioChangeEvent) => {
     setCurrentFilter(value);
   };
-  console.log(date);
+
   return (
     <div style={{ marginTop: 10 }}>
       <Row>

@@ -8,7 +8,7 @@ function useStatistics({
   date,
   currentFilter,
 }: {
-  date: DateTypeByCalendarType<"month" | "week" | "date" | "range"> | null;
+  date: [string, string] | null;
   currentFilter: Filters;
 }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,10 +16,8 @@ function useStatistics({
 
   useEffect(() => {
     if (!date) return;
-    const fromDate = (Array.isArray(date) ? date[0] : date).format(
-      "YYYY-MM-DD"
-    );
-    const toDate = (Array.isArray(date) ? date[1] : date).format("YYYY-MM-DD");
+    const fromDate = date[0];
+    const toDate = date[1];
     let isActualRequest = true;
 
     async function getTableData() {

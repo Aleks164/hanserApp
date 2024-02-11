@@ -1,22 +1,14 @@
 import React from "react";
 import styles from "./styles.module.css";
-import { DateTypeByCalendarType } from "@/globals";
 
-function CurrentDate({
-  date,
-}: {
-  date: DateTypeByCalendarType<"month" | "week" | "date" | "range"> | null;
-}) {
+function CurrentDate({ date }: { date: [string, string] | null }) {
   if (!date) return null;
-  const firstDate = (Array.isArray(date) ? date[0] : date).format("YYYY-MM-DD");
-  const secondDate = (Array.isArray(date) ? date[1] : date).format(
-    "YYYY-MM-DD"
-  );
+  const firstDate = date[0].split("-").splice(1).join(".");
+  const secondDate = date[1].split("-").splice(1).join(".");
   return (
-    <div className={styles.current_date}>{` ${firstDate.replace(
-      /-/g,
-      "."
-    )}---${secondDate.replace(/-/g, ".")}`}</div>
+    <div className={styles.current_date}>{` ${firstDate}---${secondDate} ${
+      date[0].split("-")[0]
+    }`}</div>
   );
 }
 

@@ -1,6 +1,5 @@
 import express from "express";
 import getRatingByNmidList from "./getRatingByNmidList";
-import SupplierReportDetailByPeriod from "../../../../model/supplierReportDetailByPeriod";
 import getRatingFromWB, { Rating } from "../../../../utils/fromWB/getRatingFromWB";
 import SupplierRating from "../../../../model/supplierRating";
 

@@ -13,10 +13,19 @@ const items: MenuProps["items"] = [
     icon: <DatabaseOutlined />,
   },
   {
-    label: <Link to="diagrams/">Графики</Link>,
+    label: (
+      <Link
+        style={{ cursor: "not-allowed" }}
+        onClick={(e) => e.preventDefault()}
+        to="diagrams/"
+      >
+        Графики
+      </Link>
+    ),
     key: "diagrams",
     icon: <LineChartOutlined />,
     title: "В разработке",
+    disabled: true,
   },
 ];
 

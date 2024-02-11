@@ -4,7 +4,7 @@ export default function getProductList(nmidList: string[]): PipelineStage[] {
     return [
         {
             '$match': {
-                'nmid': {
+                'nmId': {
                     '$in': nmidList
                 }
             }

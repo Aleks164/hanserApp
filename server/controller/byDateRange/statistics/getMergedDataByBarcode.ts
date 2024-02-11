@@ -10,8 +10,8 @@ function getMergedDataByBarcode({ sales, stocks, orders, ratings }: { sales: Sal
     const articleByBarcodeMap: Record<number, Set<string>> = {};
 
     sales.forEach(sales => {
+        articleByBarcodeMap[sales.nmId] = articleByBarcodeMap[sales.nmId] ? articleByBarcodeMap[sales.nmId].add(sales.barcode) : new Set(sales.barcode);
         if (!mergeData[sales.barcode]) {
-            articleByBarcodeMap[sales.nmId] = articleByBarcodeMap[sales.nmId] ? articleByBarcodeMap[sales.nmId].add(sales.barcode) : new Set(sales.barcode);
             mergeData[sales.barcode] = {
                 ...mergeItem,
                 ...sales, saleQuantity: 1
@@ -22,8 +22,8 @@ function getMergedDataByBarcode({ sales, stocks, orders, ratings }: { sales: Sal
     })
 
     orders.forEach(order => {
+        articleByBarcodeMap[order.nmId] = articleByBarcodeMap[order.nmId] ? articleByBarcodeMap[order.nmId].add(order.barcode) : new Set(order.barcode);
         if (!mergeData[order.barcode]) {
-            articleByBarcodeMap[order.nmId] = articleByBarcodeMap[order.nmId] ? articleByBarcodeMap[order.nmId].add(order.barcode) : new Set(order.barcode);
             const { isCancel } = order;
             mergeData[order.barcode] = {
                 ...mergeItem,
@@ -37,8 +37,8 @@ function getMergedDataByBarcode({ sales, stocks, orders, ratings }: { sales: Sal
     })
 
     stocks.forEach(stock => {
+        articleByBarcodeMap[stock.nmId] = articleByBarcodeMap[stock.nmId] ? articleByBarcodeMap[stock.nmId].add(stock.barcode) : new Set(stock.barcode);
         if (!mergeData[stock.barcode]) {
-            articleByBarcodeMap[stock.nmId] = articleByBarcodeMap[stock.nmId] ? articleByBarcodeMap[stock.nmId].add(stock.barcode) : new Set(stock.barcode);
             mergeData[stock.barcode] = {
                 ...mergeItem,
                 ...stock
@@ -54,8 +54,9 @@ function getMergedDataByBarcode({ sales, stocks, orders, ratings }: { sales: Sal
 
     ratings.forEach(rating => {
         articleByBarcodeMap[rating.nmId]?.forEach((barcode) => {
-            mergeData[barcode].valuation = rating.valuation;
-            mergeData[barcode].feedbacksCount = rating.feedbacksCount;
+            if (!mergeData[barcode]) return;
+            mergeData[barcode].valuation = rating.valuation || "0";
+            mergeData[barcode].feedbacksCount = rating.feedbacksCount || 0;
         })
     });
 
