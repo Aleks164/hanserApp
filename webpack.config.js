@@ -8,11 +8,7 @@ const StyleLoader = require.resolve('style-loader');
 
 module.exports = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
-  entry: resolve(__dirname, "./src/index"),
-  devtool:
-    process.env.NODE_ENV === "production"
-      ? "hidden-source-map"
-      : "eval-source-map",
+  entry: resolve(__dirname, "./src/index"), 
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
     alias: {
