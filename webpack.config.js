@@ -20,7 +20,7 @@ module.exports = {
     },
   },
   devServer: {
-    port: process.env.NODE_ENV === "development"?8880: 80,
+    port: process.env.NODE_ENV === "development"?80: 8080,
     historyApiFallback: true,
     allowedHosts: "all"
   },
