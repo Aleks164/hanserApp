@@ -38,7 +38,9 @@ const characteristicsColumns = [
 ];
 
 function ProductCards() {
-  const [tableData, setTableData] = useState<any[] | undefined>(undefined);
+  const [tableData, setTableData] = useState<
+    { items: Card[]; total: number } | undefined
+  >(undefined);
   const [currentCard, setCurrentCard] = useState<Card | null>(null);
   const [searchValue, setSearchValue] = useState<string>("");
   const [page, setPage] = useState<number>(1);
@@ -47,13 +49,13 @@ function ProductCards() {
     let isActualRequest = true;
     async function setData() {
       const data = await getProductsCards(searchValue, page);
-      if (isActualRequest) setTableData(data);
+      if (isActualRequest && data) setTableData(data);
     }
     setData();
     return () => {
       isActualRequest = false;
     };
-  }, [searchValue]);
+  }, [searchValue, page]);
 
   const onRowClick = (card: Card) => {
     setCurrentCard(card);
@@ -67,7 +69,7 @@ function ProductCards() {
   const onChangePagination: TableProps<any>["onChange"] = (pagination) => {
     if (pagination.current) setPage(pagination.current);
   };
-  console.log(currentCard);
+
   return (
     <div style={{ marginTop: 10 }}>
       <Row gutter={12} style={{ flexWrap: "nowrap" }}>
@@ -87,14 +89,18 @@ function ProductCards() {
           />
           <DataTable
             loading={!tableData}
-            itemsList={tableData}
+            itemsList={tableData?.items}
             columns={productCardsColumns}
             style={{ width: 500 }}
             onRowClick={onRowClick}
             isSelected={isSelected}
             isSelectableRow
             onChangePagination={onChangePagination}
-            pagination={{ showSizeChanger: false, current: page, total: 100 }}
+            pagination={{
+              showSizeChanger: false,
+              current: page,
+              total: tableData?.total || 1,
+            }}
             rowKey="nmUUID"
           />
         </Col>

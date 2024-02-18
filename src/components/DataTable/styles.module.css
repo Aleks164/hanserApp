@@ -22,5 +22,4 @@
 
 .table_selectable_row td {
   cursor: pointer;
-  user-select: none;
 }

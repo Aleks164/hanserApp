@@ -5,16 +5,21 @@ import ProductImage from "@/components/ProductImage";
 import { FeedbacksParams } from "@/Pages/TabTables";
 import { MergeItem } from "..";
 import { Row, Button, Input } from "antd";
+import { ColumnFilterItem } from "antd/es/table/interface";
 
 export type GetReportColumnType = typeof getColumns;
 type GetReportColumnArgsType = {
   chosenProducts: ChosenProductsType;
   setFeedbacksParams: React.Dispatch<React.SetStateAction<FeedbacksParams>>;
+  supplierArticleFilters: ColumnFilterItem[];
+  nmIdFilters: ColumnFilterItem[];
 };
 
 export const getColumns = ({
   chosenProducts,
   setFeedbacksParams,
+  supplierArticleFilters,
+  nmIdFilters,
 }: GetReportColumnArgsType): ColumnType<MergeItem>[] => [
   {
     title: "Бар-код",
@@ -58,6 +63,10 @@ export const getColumns = ({
       compare: (a, b) => +a.nmId - +b.nmId,
       multiple: 2,
     },
+    filters: nmIdFilters,
+    onFilter: (value, record) =>
+      record.nmId.toString().startsWith(value.toString()),
+    filterSearch: true,
   },
   {
     title: "Фото",
@@ -122,6 +131,10 @@ export const getColumns = ({
     dataIndex: "supplierArticle",
     key: "supplierArticle",
     sorter: (a, b) => ("" + a.supplierArticle).localeCompare(b.supplierArticle),
+    filters: supplierArticleFilters,
+    onFilter: (value, record) =>
+      record.supplierArticle.startsWith(value.toString()),
+    filterSearch: true,
   },
 
   {

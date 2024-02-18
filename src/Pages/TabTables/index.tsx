@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FloatButton, Radio, RadioChangeEvent, Row } from "antd";
 import dayjs from "dayjs";
 
@@ -25,6 +25,7 @@ import getFeedbacksByNmId, {
   FEEDBACK_PATH_NAMES,
   FeedbackData,
 } from "@/requestDataHelpers/getFeedbacksByNmId";
+import { ColumnFilterItem } from "antd/es/table/interface";
 
 export interface Rating {
   valuation: string;
@@ -100,6 +101,25 @@ function TabTables() {
     setCurrentFilter(value);
   };
 
+  const { supplierArticleFilters, nmIdFilters } = useMemo(() => {
+    const supplierArticleFilters: Record<string, ColumnFilterItem> = {};
+    const nmIdFilters: Record<string, ColumnFilterItem> = {};
+    tableData.forEach((date) => {
+      supplierArticleFilters[date.supplierArticle] = {
+        text: date.supplierArticle,
+        value: date.supplierArticle,
+      };
+      nmIdFilters[date.nmId] = {
+        text: date.nmId,
+        value: date.nmId,
+      };
+    });
+    return {
+      supplierArticleFilters: Object.values(supplierArticleFilters),
+      nmIdFilters: Object.values(nmIdFilters),
+    };
+  }, [tableData]);
+
   return (
     <div style={{ marginTop: 10 }}>
       <Row>
@@ -125,6 +145,8 @@ function TabTables() {
           columns={getColumns({
             chosenProducts,
             setFeedbacksParams,
+            supplierArticleFilters,
+            nmIdFilters,
           })}
           loading={isLoading}
         />

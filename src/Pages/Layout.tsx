@@ -58,7 +58,11 @@ const Layout: React.FC = () => {
             selectedKeys={[current]}
             mode="horizontal"
             items={items}
-            style={{ boxShadow: "#5b5b5b 1px 1px 3px 2px" }}
+            style={{
+              boxShadow: "#5b5b5b 1px 1px 3px 2px",
+              backgroundColor: "#bebebe",
+              fontWeight: 900,
+            }}
           />
         </Col>
         <Col className={styles.logo_container}>
