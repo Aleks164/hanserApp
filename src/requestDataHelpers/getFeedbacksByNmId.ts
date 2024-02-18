@@ -18,7 +18,7 @@ export interface Feedback {
     id: string;
     text: string;
     productValuation: number;
-    createdDate: Date;
+    createdDate: string;
     answer: null | {
         editable: boolean;
         state: string;

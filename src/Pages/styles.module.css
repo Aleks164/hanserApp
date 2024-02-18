@@ -1,12 +1,10 @@
 body {
   background: linear-gradient(
     90deg,
-    rgba(235, 234, 196, 1) 0%,
-    rgba(236, 212, 150, 1) 45%,
-    rgba(208, 188, 199, 1) 100%
+    rgb(156 156 156) 0%,
+    rgb(206 199 183) 45%,
+    rgb(137 137 137) 100%
   );
-  background-size: 1500px;
-  background-repeat: repeat-x;
 }
 
 .logo_container {
@@ -16,7 +14,7 @@ body {
   padding: 1px;
   margin: 0px;
   height: 46px;
-  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .logo {

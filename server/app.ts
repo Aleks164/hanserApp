@@ -13,6 +13,7 @@ import feedbacksByNmid from "./controller/byDateRange/byBarcode/feedback";
 import statisticsByDateRange from "./controller/byDateRange/statistics";
 import DBRequestCache from "./utils/cache";
 import updateMissingRatings from "./utils/updateMissingRatings";
+import productCards from "./controller/productCards";
 
 const app = express();
 const port = 80;
@@ -32,6 +33,8 @@ app.use("/rating", ratingByNmid);
 app.use("/feedback", feedbacksByNmid);
 app.use("/productsList", productListByDateRange);
 app.use("/statistics", statisticsByDateRange);
+
+app.use("/cards", productCards);
 
 
 app.get("/", (req, res) => {

@@ -1,5 +1,9 @@
-import React, { useState } from "react";
-import { DatabaseOutlined, LineChartOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import {
+  DatabaseOutlined,
+  FormOutlined,
+  LineChartOutlined,
+} from "@ant-design/icons";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { Col, Menu, Row } from "antd";
 import type { MenuProps } from "antd";
@@ -11,6 +15,11 @@ const items: MenuProps["items"] = [
     label: <Link to="/">Статистика</Link>,
     key: "statistics",
     icon: <DatabaseOutlined />,
+  },
+  {
+    label: <Link to="/cards">Номенклатура</Link>,
+    key: "cards",
+    icon: <FormOutlined />,
   },
   {
     label: (
@@ -36,18 +45,23 @@ const Layout: React.FC = () => {
     setCurrent(e.key);
   };
 
+  useEffect(() => {
+    if (location.pathname.includes("cards")) setCurrent("cards");
+  }, []);
+
   return (
     <>
       <Row>
-        <Col flex={4}>
+        <Col flex={1}>
           <Menu
             onClick={onClick}
             selectedKeys={[current]}
             mode="horizontal"
             items={items}
+            style={{ boxShadow: "#5b5b5b 1px 1px 3px 2px" }}
           />
         </Col>
-        <Col className={styles.logo_container} flex={1}>
+        <Col className={styles.logo_container}>
           <NavLink
             to={"https://www.wildberries.ru/brands/hanster"}
             target="_blank"

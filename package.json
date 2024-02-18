@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack build --node-env production",
     "dev": "webpack serve --open --node-env development",
+    "prod": "webpack serve --open --node-env production",
     "lint": "prettier --check . && eslint . --ext .js,.tsx && tsc --noEmit && stylelint \"**/*.css\"",
     "lint:fix": "prettier --write . && eslint . --fix --ext .js,.tsx && stylelint \"**/*.css\" --fix",
     "tsc": "npx tsc --noEmit",

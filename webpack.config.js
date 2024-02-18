@@ -4,10 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const CssLoader = require.resolve('css-loader')
-const StyleLoader = require.resolve('style-loader');  
-
-const isDev = process.env.NODE_ENV === "development";
-const PREFIX = "/hanster_stat/";
+const StyleLoader = require.resolve('style-loader');   
 
 module.exports = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
@@ -23,13 +20,12 @@ module.exports = {
     },
   },
   devServer: {
-    port: 80,
+    port: process.env.NODE_ENV === "production"? 80: 8880,
     historyApiFallback: true,
     allowedHosts: "all"
   },
   output: {
-    path: resolve(__dirname, "dist"),
-    publicPath: isDev ? "/" : PREFIX,
+    path: resolve(__dirname, "dist"), 
     clean: true,
   },
   module: {

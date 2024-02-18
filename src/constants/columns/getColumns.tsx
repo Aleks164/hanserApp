@@ -4,10 +4,7 @@ import { ChosenProductsType } from "@/store/StatStoreContext";
 import ProductImage from "@/components/ProductImage";
 import { FeedbacksParams } from "@/Pages/TabTables";
 import { MergeItem } from "..";
-import { Row, Button, Input, Popover } from "antd";
-import { CloseOutlined, SearchOutlined } from "@ant-design/icons";
-
-const { Search } = Input;
+import { Row, Button, Input } from "antd";
 
 export type GetReportColumnType = typeof getColumns;
 type GetReportColumnArgsType = {
@@ -30,34 +27,52 @@ export const getColumns = ({
     },
   },
   {
+    title: "Предмет",
+    dataIndex: "subject",
+    key: "subject",
+    width: 90,
+    sorter: (a, b) => ("" + a.subject).localeCompare(b.subject),
+  },
+  {
+    title: "Склад",
+    dataIndex: "warehouseName",
+    key: "warehouseName",
+    width: 80,
+    sorter: (a, b) => {
+      return ("" + a.warehouseName).localeCompare(b.warehouseName);
+    },
+  },
+  {
+    title: "Артикул WB",
+    dataIndex: "nmId",
+    key: "nmId",
+    width: 100,
+    render: (value: number, record) => {
+      return (
+        <div className="nmId_item" style={{ textAlign: "center" }}>
+          {value}
+        </div>
+      );
+    },
+    sorter: {
+      compare: (a, b) => +a.nmId - +b.nmId,
+      multiple: 2,
+    },
+  },
+  {
     title: "Фото",
     dataIndex: "nmId",
     key: "nmId",
-    fixed: "left",
-    width: 140,
+    width: 50,
     render: (value: number, record) => (
       <ProductImage value={value} record={record} />
-    ),
-  },
-  {
-    title: "Рейтинг",
-    dataIndex: "valuation",
-    key: "valuation",
-    fixed: "left",
-    sorter: (a, b) => +(!isNaN(+b.valuation) && +a.valuation - +b.valuation),
-    width: 140,
-    render: (value: number, record) => (
-      <>
-        {"⭐️"} {record?.valuation || 0}
-      </>
     ),
   },
   {
     title: "Отзывы",
     dataIndex: "feedbacksCount",
     key: "feedbacksCount",
-    fixed: "left",
-    width: 140,
+    width: 50,
     sorter: (a, b) =>
       +(!isNaN(+b.feedbacksCount) && a.feedbacksCount - b.feedbacksCount),
     render: (value: number, record) => (
@@ -91,36 +106,24 @@ export const getColumns = ({
     ),
   },
   {
-    title: "Предмет",
-    dataIndex: "subject",
-    key: "subject",
-    width: 90,
-    sorter: (a, b) => ("" + a.subject).localeCompare(b.subject),
+    title: "Рейтинг",
+    dataIndex: "valuation",
+    key: "valuation",
+    sorter: (a, b) => +(!isNaN(+b.valuation) && +a.valuation - +b.valuation),
+    width: 50,
+    render: (value: number, record) => (
+      <>
+        {"⭐️"} {record?.valuation || 0}
+      </>
+    ),
   },
   {
     title: "Артикул продавца",
     dataIndex: "supplierArticle",
     key: "supplierArticle",
-    width: 125,
     sorter: (a, b) => ("" + a.supplierArticle).localeCompare(b.supplierArticle),
   },
-  {
-    title: "Артикул WB",
-    dataIndex: "nmId",
-    key: "nmId",
-    width: 100,
-    render: (value: number, record) => {
-      return (
-        <div className="nmId_item" style={{ textAlign: "center" }}>
-          {value}
-        </div>
-      );
-    },
-    sorter: {
-      compare: (a, b) => +a.nmId - +b.nmId,
-      multiple: 2,
-    },
-  },
+
   {
     title: "Размер",
     dataIndex: "techSize",
@@ -132,32 +135,7 @@ export const getColumns = ({
     },
   },
   {
-    title: "Склад",
-    dataIndex: "warehouseName",
-    key: "warehouseName",
-    width: 80,
-    sorter: (a, b) => {
-      return ("" + a.warehouseName).localeCompare(b.warehouseName);
-    },
-  },
-  {
-    title: "Кол-во на складе",
-    dataIndex: "quantity",
-    key: "quantity",
-    width: 85,
-    render: (value) => value || 0,
-    sorter: (a, b) => a.quantity! - b.quantity!,
-  },
-  {
-    title: "Возвращаются от клиента на склад",
-    dataIndex: "inWayFromClient",
-    key: "inWayFromClient",
-    width: 80,
-    render: (value) => value || 0,
-    sorter: (a, b) => a.inWayFromClient - b.inWayFromClient,
-  },
-  {
-    title: "Фактическая цена с учетом всех скидок",
+    title: "Фактическая цена",
     dataIndex: "finishedPrice",
     key: "finishedPrice",
     width: 85,
@@ -174,20 +152,37 @@ export const getColumns = ({
     sorter: (a, b) => a.orderQuantity - b.orderQuantity,
   },
   {
-    title: "Возвратов",
-    dataIndex: "isCancel",
-    key: "isCancel",
-    width: 60,
-    render: (value) => value || 0,
-    sorter: (a, b) => +a.isCancel - +b.isCancel,
-  },
-  {
     title: "Кол-во продаж",
     dataIndex: "saleQuantity",
     key: "saleQuantity",
     width: 85,
-    fixed: "right",
     render: (value) => value || 0,
     sorter: (a, b) => a.saleQuantity - b.saleQuantity,
   },
+  {
+    title: "Кол-во на складе",
+    dataIndex: "quantity",
+    key: "quantity",
+    width: 85,
+    fixed: "right",
+    render: (value) => value || 0,
+    sorter: (a, b) => a.quantity! - b.quantity!,
+  },
+  // {
+  //   title: "Возвращаются от клиента на склад",
+  //   dataIndex: "inWayFromClient",
+  //   key: "inWayFromClient",
+  //   width: 80,
+  //   render: (value) => value || 0,
+  //   sorter: (a, b) => a.inWayFromClient - b.inWayFromClient,
+  // },
+
+  // {
+  //   title: "Возвратов",
+  //   dataIndex: "isCancel",
+  //   key: "isCancel",
+  //   width: 60,
+  //   render: (value) => value || 0,
+  //   sorter: (a, b) => +a.isCancel - +b.isCancel,
+  // },
 ];

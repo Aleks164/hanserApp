@@ -1,8 +1,7 @@
 import React from "react";
 import getImgSrc from "@/constants/getImageSrc";
 import styles from "./styles.module.css";
-import { Button, Col, Popover, Row } from "antd";
-import { FeedbacksParams } from "@/Pages/TabTables";
+import { Col, Popover, Row } from "antd";
 import { MergeItem } from "@/constants";
 
 function ProductImage({ value, record }: { value: number; record: MergeItem }) {
@@ -26,7 +25,7 @@ function ProductImage({ value, record }: { value: number; record: MergeItem }) {
           <img
             className={styles.goods_pictures}
             src={getImgSrc(value)}
-            alt={record.subject}
+            alt={"Hanster"}
           />
         </Popover>
       </Col>

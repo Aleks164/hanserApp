@@ -12,3 +12,15 @@
   border-bottom: 1px solid #bebebe !important;
   background-color: #ededed !important;
 }
+
+.table_selected_row td {
+  box-sizing: border-box;
+  background-color: #99d0ff !important;
+  border-bottom: 2px solid #0660ac !important;
+  border-top: 2px solid #0660ac !important;
+}
+
+.table_selectable_row td {
+  cursor: pointer;
+  user-select: none;
+}

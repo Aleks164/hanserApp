@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Radio, RadioChangeEvent, Row } from "antd";
+import { FloatButton, Radio, RadioChangeEvent, Row } from "antd";
 import dayjs from "dayjs";
 
 import DataTable from "@/components/DataTable/Index";
@@ -121,12 +121,14 @@ function TabTables() {
         </Row>
         <DataTable
           itemsList={tableData}
+          style={{ width: "100%" }}
           columns={getColumns({
             chosenProducts,
             setFeedbacksParams,
           })}
           loading={isLoading}
         />
+        <FloatButton.BackTop />
         <Feedbacks
           feedbacksParams={feedbacksParams}
           setFeedbacksParams={setFeedbacksParams}
