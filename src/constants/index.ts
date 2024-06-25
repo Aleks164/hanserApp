@@ -1,5 +1,7 @@
 
-export const HOST_NAME = process.env.NODE_ENV === 'development' ? 'http://81.31.247.81:80' : 'http://localhost:80';
+// console.log("===========", process.env)
+// export const HOST_NAME = process.env.npm_config_mode === "dev" ? 'http://localhost:80' : 'http://81.31.247.81:80';
+export const HOST_NAME = 'http://localhost:80';
 export const calendarTypes = ["month", "week", "date", "range"] as const;
 export const diagramPageCalendarTypes = ["month", "week", "date"] as const;
 export const datePickerDictionary = {

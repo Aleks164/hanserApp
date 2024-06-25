@@ -4,7 +4,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const CssLoader = require.resolve('css-loader')
-const StyleLoader = require.resolve('style-loader');   
+const StyleLoader = require.resolve('style-loader'); 
+const Dotenv = require('dotenv-webpack');  
 
 module.exports = {
   mode: process.env.NODE_ENV === "production" ? "production" : "development",
@@ -20,7 +21,7 @@ module.exports = {
     },
   },
   devServer: {
-    port: process.env.NODE_ENV === "development"?80: 8080,
+    port:  8080,
     historyApiFallback: true,
     allowedHosts: "all"
   },
@@ -82,6 +83,7 @@ module.exports = {
     minimizer: ["...", new CssMinimizerPlugin()],
   },
   plugins: [ 
+    new Dotenv(),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
