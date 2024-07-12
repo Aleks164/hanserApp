@@ -12,7 +12,7 @@ function Router() {
         <Route index element={<TabTables />} />
         <Route path="diagrams" element={<Diagrams />} />
         <Route path="cards" element={<ProductCards />} />
-        <Route path="*" element={<TabTables />} />
+        <Route path="*" element={<div>Page not found</div>} />
       </Route>
     </Routes>
   );

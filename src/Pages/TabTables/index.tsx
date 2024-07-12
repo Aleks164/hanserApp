@@ -8,16 +8,10 @@ import ExcelImporter from "@/components/ExcelImporter";
 import CurrentDate from "./CurrentDate";
 import { getColumns } from "@/constants/columns/getColumns";
 import { dateFormat } from "@/constants";
-import { $chosenProducts, $calendarDate } from "@/store";
+import { $chosenProducts } from "@/store";
 import { useStore } from "effector-react";
 import styles from "./styles.module.css";
-import {
-  SalesType,
-  OrdersType,
-  StocksType,
-  CalendarType,
-  DateTypeByCalendarType,
-} from "@/globals";
+import { SalesType, OrdersType, StocksType } from "@/globals";
 import useStatistics from "./useStatistics";
 import Feedbacks from "./Feedbacks";
 import getFeedbacksByNmId, {

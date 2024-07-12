@@ -14,32 +14,11 @@ import statisticsByDateRange from "./controller/byDateRange/statistics";
 import DBRequestCache from "./utils/cache";
 import updateMissingRatings from "./utils/updateMissingRatings";
 import productCards from "./controller/productCards";
-import cookieParser from 'cookie-parser';
-
 
 const app = express();
 const port = 80;
-const userCounter = 0;
-// const key = fs.readFileSync('/etc/letsencrypt/live/hansterstatserver.ru/privkey.pem');
-// const cert = fs.readFileSync('/etc/letsencrypt/live/hansterstatserver.ru/fullchain.pem');
-// const options = {
-// key: key,
-// cert: cert
-// };
-console.log(1, process.env.npm_config_mode === "dev")
 
-// app.use(cookieParser());
-// app.use(express.json());
-// app.use(cors({
-//   origin: process.env.npm_config_mode === "dev" ? 'http://localhost:8080' : 'http://81.31.247.81:80',
-//   credentials: true,
-// }));
 app.use(cors());
-
-// app.get("*", (req, res) => {
-//   res.cookie('user', 'JohnDoe');
-//   res.status(404).send("Sorry, cant find that");
-// });
 
 app.use("/orders", ordersByDateRange);
 app.use("/stocks", stocksByDateRange);
@@ -76,8 +55,6 @@ const updateMissingRatingsJob = new CronJob('0 55 6 * * *', async function () {
 
 regularUpdateMongoDBJob.start();
 updateMissingRatingsJob.start();
-
-// const server = https.createServer(options, app);
 
 app.listen(port, async () => {
   await connectToDB();

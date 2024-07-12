@@ -105,7 +105,7 @@ function Feedbacks({ feedbacksParams, setFeedbacksParams }: FeedbacksProps) {
                     avatar={
                       <Space size={12}>
                         <div>
-                          {"⭐️"} {feedback.productValuation || "нет"}
+                          {"⭐️"} {feedback.productValuation || "-"}
                         </div>
                         <Avatar src={getImgSrc(feedback.productDetails.nmId)} />
                       </Space>
