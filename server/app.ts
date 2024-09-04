@@ -16,7 +16,7 @@ import updateMissingRatings from "./utils/updateMissingRatings";
 import productCards from "./controller/productCards";
 import { startBot } from "./bot/bot";
 
-startBot();
+// startBot();
 const app = express();
 const port = 80;
 
