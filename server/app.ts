@@ -14,7 +14,9 @@ import statisticsByDateRange from "./controller/byDateRange/statistics";
 import DBRequestCache from "./utils/cache";
 import updateMissingRatings from "./utils/updateMissingRatings";
 import productCards from "./controller/productCards";
+import { startBot } from "./bot/bot";
 
+startBot();
 const app = express();
 const port = 80;
 
@@ -31,7 +33,6 @@ app.use("/statistics", statisticsByDateRange);
 
 app.use("/cards", productCards);
 
-
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -40,17 +41,17 @@ app.get("*", (req, res) => {
   res.status(404).send("Sorry, cant find that");
 });
 
-const regularUpdateMongoDBJob = new CronJob('0 45 6 * * *', async function () {
-  console.log('start', new Date());
+const regularUpdateMongoDBJob = new CronJob("0 45 6 * * *", async function () {
+  console.log("start", new Date());
   DBRequestCache.flushAll();
   await regularUpdateMongoDB();
-  console.log('end', new Date());
+  console.log("end", new Date());
 });
 
-const updateMissingRatingsJob = new CronJob('0 55 6 * * *', async function () {
-  console.log('start', new Date());
+const updateMissingRatingsJob = new CronJob("0 55 6 * * *", async function () {
+  console.log("start", new Date());
   await updateMissingRatings();
-  console.log('end', new Date());
+  console.log("end", new Date());
 });
 
 regularUpdateMongoDBJob.start();
@@ -60,4 +61,3 @@ app.listen(port, async () => {
   await connectToDB();
   console.log(`Listening on port ${port}`);
 });
-

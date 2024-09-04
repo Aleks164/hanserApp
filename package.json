@@ -11,7 +11,7 @@
     "lint:fix": "prettier --write . && eslint . --fix --ext .js,.tsx && stylelint \"**/*.css\" --fix",
     "tsc": "npx tsc --noEmit",
     "start": "concurrently \"ts-node --esm server/app.ts\" \"npm run dev\"",
-    "server": "ts-node --esm server/app.ts",
+    "server": "ts-node server/app.ts",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -90,6 +90,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.12.1",
     "recharts": "^2.6.2",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz",
+    "axios": "^1.7.3",
+    "telegraf": "^4.16.3"
   }
 }
