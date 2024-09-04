@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import getCoefficients, { WarehousesCoefficients } from "./getCoefficients";
-import "dotenv/config";
 import { warehouses } from "./warehouses";
+import "dotenv/config";
 
 interface WarehousesById {
   [warehouseId: number]: WarehousesCoefficients;

@@ -1,4 +1,5 @@
 import get from "axios";
+import "dotenv/config";
 
 export interface WarehousesCoefficients {
   date: string;
